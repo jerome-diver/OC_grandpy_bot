@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block body %}
+  <body>
+    <div id="content"></div>
+    <div class="row">
+        <h1>Papy Bot</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{url_for('static', filename='img/HAL 9000.gif')}}"
+                 width="300" height=300">
+        </div>
+        <div id="sentence" class="col-md-5">Les grands parents en savent long
+            sur la vie,
+            demandez à papy bot, le grand père de HAL-9000 (première génération
+            d'intelligence artificielle dans "2011 L'Odysée de l'espace")
+            ce qu'il pense...
+        </div>
+        <div class="col-md-3">
+            <img src="{{ url_for('static', filename='img/OC.png')}}"
+                 width="200" height="300"/>
+        </div>
+    </div>
+  </body>
+{% endblock %}
