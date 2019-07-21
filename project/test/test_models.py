@@ -21,11 +21,11 @@ def test_init_stop_words(caplog):
     """Test of function init_stop_words"""
 
     from project.models import init_stop_words
-    import logging
+    from logging import INFO
     init_stop_words()
     captured = caplog.record_tuples
     assert captured[0][0] == "project.models"
-    assert captured[0][1] == logging.INFO
+    assert captured[0][1] == INFO
     assert captured[0][2] == "Database with stop words content initialized"
 
 def test_db(capsys):
