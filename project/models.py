@@ -27,8 +27,15 @@ def init_stop_words():
 
     db.drop_all()
     db.create_all()
-    with open(STOP_WORDS_FR, 'r') as swfr:
-        for word in swfr:
-            db.session.add(Content(word))
-        db.session.commit()
-    lg.warning("Database with stop words content initialized")
+    try:
+        with open(STOP_WORDS_FR, 'r') as sw_file:
+            for word in sw_file:
+                db.session.add(Content(word))
+            db.session.commit()
+    except FileNotFoundError as fnf_error:
+        lg.error(f"{fnf_error}\nTry to check your file is in "
+                 f"project/assets/stop_words-fr.txt and is readable")
+    except Exception as Error:
+        lg.error(f"Something gone wrong: {Error}")
+    else:
+        lg.warning("Database with stop words content initialized")
