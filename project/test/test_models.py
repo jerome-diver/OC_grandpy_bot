@@ -17,14 +17,16 @@ class TestContent:
         assert self.content.word == "test"
 
 
-def test_init_stop_words(capsys):
+def test_init_stop_words(caplog):
     """Test of function init_stop_words"""
 
     from project.models import init_stop_words
+    import logging
     init_stop_words()
-    captured = capsys.readouterr()
-    assert captured.out == "INFO :: Database with stop words content " \
-                                "initialized\n"
+    captured = caplog.record_tuples
+    assert captured[0][0] == "project.models"
+    assert captured[0][1] == logging.INFO
+    assert captured[0][2] == "Database with stop words content initialized"
 
 def test_db(capsys):
     """Test type of global module scope  variable db"""
