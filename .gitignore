@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+# tags list
+tags
+
+# sqlite database files
+*.db
+
 # Distribution / packaging
 .Python
 build/
@@ -71,6 +77,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.ipynb
 
 # pyenv
 .python-version
@@ -102,3 +109,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# PyCharm repos
+.idea/
+.idea/*
