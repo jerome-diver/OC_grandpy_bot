@@ -5,11 +5,23 @@
     used for handle data content through SQLAlchemy ORM to
     sqlite database
 """
+from flask_sqlalchemy import SQLAlchemy
+
+from project.views import app
+from project.models import Content
+
 
 class TestContent:
     """Test class Content"""
-    from project.models import Content
-    content = Content("test")
+
+    @classmethod
+    def setup_class(cls):
+        db = SQLAlchemy(app)
+        cls.id = db.Column(db.Integer(), primary_key=True)
+        cls.word = db.Column(db.String(), nullable=False)
+
+    def setup_method(self):
+            self.content = Content("test")
 
     def test_init(self):
         """Test of initialization of Content object instance"""
@@ -34,4 +46,4 @@ def test_db(capsys):
     from project.models import db
     print(type(db))
     captured = capsys.readouterr()
-    assert  captured.out == "<class 'flask_sqlalchemy.SQLAlchemy'>\n"
+    assert captured.out == "<class 'flask_sqlalchemy.SQLAlchemy'>\n"
