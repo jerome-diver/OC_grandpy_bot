@@ -6,9 +6,12 @@
     sqlite database
 """
 from flask_sqlalchemy import SQLAlchemy
+from logging import INFO, ERROR
 
 from project.views import app
-from project.models import Content
+from project.models import Content, init_stopwords
+from project import models
+from config import STOP_WORDS_FR
 
 
 class TestContent:
@@ -34,22 +37,27 @@ def test_init_stop_words(caplog, monkeypatch):
 
     original_open = open
 
-    def monkeyreturn(*args, **kwargs):
+    def monkey_open(*args, **kwargs):
         return original_open('fake', 'r')
 
+    def monkey_db():
+        return None
 
-    from project.models import init_stop_words
-    from logging import INFO, ERROR
-    init_stop_words()
-    monkeypatch.setitem(__builtins__, 'open', monkeyreturn)
-    init_stop_words()
+    init_stopwords()
+    monkeypatch.setitem(__builtins__, 'open', monkey_open)
+    init_stopwords()
+    monkeypatch.setattr(models, 'db', monkey_db)
+    init_stopwords()
     captured = caplog.record_tuples
     assert captured[0][0] == "project.models"
     assert captured[0][1] == INFO
     assert captured[0][2] == "Database with stop words content initialized"
-    for w in captured[1]:
-        print(w)
+    assert captured[1][0] == "project.models"
     assert captured[1][1] == ERROR
+    assert captured[1][2] == f"[Errno 2] No such file or directory: 'fake'\n" \
+                             f"Try to check your file is in " \
+                             f"{STOP_WORDS_FR} and is readable"
+
 
 def test_db(capsys):
     """Test type of global module scope  variable db"""

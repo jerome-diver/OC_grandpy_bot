@@ -1,8 +1,8 @@
 """Model of database data"""
 
+from flask_sqlalchemy import SQLAlchemy
 import logging as lg
 import sys
-from flask_sqlalchemy import SQLAlchemy
 
 from project.views import app
 from config import STOP_WORDS_FR
@@ -23,26 +23,26 @@ class Content(db.Model):
 db.create_all()
 
 
-def init_stop_words():
-    """"Initialize database from stop words text file"""
+def init_stopwords():
+    """Initialization of stop words in database model"""
 
-    db.drop_all()
-    db.create_all()
+    format_handler = lg.Formatter('%(levelname)s :: %(message)s')
+    handler = lg.StreamHandler(sys.stdout)
+    handler.setFormatter(format_handler)
     logger = lg.getLogger(__name__)
     logger.setLevel(lg.INFO)
-    handler = lg.StreamHandler(sys.stdout)
-    format = lg.Formatter('%(levelname)s :: %(message)s')
-    handler.setFormatter(format)
     logger.addHandler(handler)
     try:
+        db.drop_all()
+        db.create_all()
         with open(STOP_WORDS_FR, 'r') as sw_file:
             for word in sw_file:
                 db.session.add(Content(word))
             db.session.commit()
-    except FileNotFoundError as fnf_error:
-        logger.error(f"{fnf_error}\nTry to check your file is in "
-                 f"project/assets/stop_words-fr.txt and is readable")
-    except Exception as Error:
-        logger.error(f"Something gone wrong: {Error}")
+    except FileNotFoundError as error:
+        logger.error(f"{error}\nTry to check your file is in "
+                     f"{STOP_WORDS_FR} and is readable")
+    except Exception as error:
+        logger.error(f"Something gone wrong: {error}")
     else:
         logger.info("Database with stop words content initialized")

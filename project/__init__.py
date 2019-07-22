@@ -11,4 +11,4 @@ models.db.init_app(app)
 def init_stopwords():
     """Flask command to initialize database"""
 
-    models.init_stop_words()
+    models.init_stopwords()
