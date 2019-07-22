@@ -29,16 +29,27 @@ class TestContent:
         assert self.content.word == "test"
 
 
-def test_init_stop_words(caplog):
+def test_init_stop_words(caplog, monkeypatch):
     """Test of function init_stop_words"""
 
+    original_open = open
+
+    def monkeyreturn(*args, **kwargs):
+        return original_open('fake', 'r')
+
+
     from project.models import init_stop_words
-    from logging import INFO
+    from logging import INFO, ERROR
+    init_stop_words()
+    monkeypatch.setitem(__builtins__, 'open', monkeyreturn)
     init_stop_words()
     captured = caplog.record_tuples
     assert captured[0][0] == "project.models"
     assert captured[0][1] == INFO
     assert captured[0][2] == "Database with stop words content initialized"
+    for w in captured[1]:
+        print(w)
+    assert captured[1][1] == ERROR
 
 def test_db(capsys):
     """Test type of global module scope  variable db"""
