@@ -13,6 +13,7 @@ flask-sqlalchemy = "*"
 flask = "*"
 ipykernel = "*"
 pytest-cov = "*"
+blinker = "*"
 
 [requires]
 python_version = "3.7"
