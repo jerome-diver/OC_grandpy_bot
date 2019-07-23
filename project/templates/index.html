@@ -10,11 +10,23 @@
             <img src="{{url_for('static', filename='img/HAL 9000.gif')}}"
                  width="300" height=300">
         </div>
-        <div id="sentence" class="col-md-5">Les grands parents en savent long
-            sur la vie,
-            demandez à papy bot, le grand père de HAL-9000 (première génération
-            d'intelligence artificielle dans "2011 L'Odysée de l'espace")
-            ce qu'il pense...
+        <div id="sentence" class="col-md-5">
+            <p>ot, le grand père de HAL-9000
+                (première génération d'intelligence artificielle dans
+                "2011 L'Odysée de l'espace") ce qu'il pense...
+            </p>
+            <div class="row" id="question-content">
+                <form>
+                    <div class="form-group">
+                        <label for="question">Quelle est ta question</label>
+                        <input type="text" required="true"/>
+                    </div>
+                    <div class="row">
+                        <input type="submit" formaction="/question"
+                               value="submit"/>
+                    </div>
+                </form>
+            </div>
         </div>
         <div class="col-md-3">
             <img src="{{ url_for('static', filename='img/OC.png')}}"
