@@ -2,10 +2,15 @@
 
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
+from jac.contrib.flask import JAC
 
 
 app = Flask(__name__)
 app.config.from_object('config')
+app.config['COMPRESSOR_DEBUG'] = app.config.get('DEBUG')
+app.config['COMPRESSOR_OUTPUT_DIR'] = './static/css'
+app.config['COMPRESSOR_STATIC_PREFIX'] = '/project/static/css'
+jac = JAC(app)
 Bootstrap(app)
 
 

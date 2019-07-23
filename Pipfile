@@ -14,6 +14,7 @@ flask = "*"
 ipykernel = "*"
 pytest-cov = "*"
 blinker = "*"
+jac = "*"
 
 [requires]
 python_version = "3.7"

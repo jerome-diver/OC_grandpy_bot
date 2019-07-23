@@ -1,37 +1,42 @@
 {% extends 'base.html' %}
 {% block body %}
-  <body>
-    <div id="content"></div>
-    <div class="row">
-        <h1>Papy Bot</h1>
+{% compress 'css' %}
+<link rel="stylesheet" type="text/sass"
+      href="/static/css/index.sass">
+{% endcompress %}
+<div class="row justify-content-center" id="title">
+    <h1>Papy Bot</h1>
+</div>
+<div class="row" id="content-question-row">
+    <div class="col-md-4">
+        <img src="{{url_for('static', filename='img/HAL 9000.gif')}}"
+             width="300" height=300">
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <img src="{{url_for('static', filename='img/HAL 9000.gif')}}"
-                 width="300" height=300">
-        </div>
-        <div id="sentence" class="col-md-5">
-            <p>ot, le grand père de HAL-9000
-                (première génération d'intelligence artificielle dans
-                "2011 L'Odysée de l'espace") ce qu'il pense...
-            </p>
-            <div class="row" id="question-content">
-                <form>
-                    <div class="form-group">
-                        <label for="question">Quelle est ta question</label>
-                        <input type="text" required="true"/>
-                    </div>
-                    <div class="row">
-                        <input type="submit" formaction="/question"
-                               value="submit"/>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <img src="{{ url_for('static', filename='img/OC.png')}}"
-                 width="200" height="300"/>
+    <div id="sentence" class="col-md-5">
+        <p>ot, le grand père de HAL-9000
+            (première génération d'intelligence artificielle dans
+            "2011 L'Odysée de l'espace") ce qu'il pense...
+        </p>
+        <div id="question-content">
+            <form>
+                <div class="form-group">
+                    <label for="question">Question</label>
+                    <textarea required="true" rows="4"
+                              id="question"
+                              class="form-control"></textarea>
+                </div>
+                <div class="row justify-content-center">
+                    <button type="submit"
+                            formaction="/question"
+                            value="submit"
+                            class="btn btn-primary">Demandez à GrandPy</button>
+                </div>
+            </form>
         </div>
     </div>
-  </body>
+    <div class="col-md-3">
+        <img src="{{ url_for('static', filename='img/OC.png')}}"
+             width="200" height="300"/>
+    </div>
+</div>
 {% endblock %}
