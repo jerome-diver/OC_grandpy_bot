@@ -3,6 +3,7 @@
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from jac.contrib.flask import JAC
+from flask import jsonify, request
 
 
 app = Flask(__name__)
@@ -21,3 +22,11 @@ def index():
 
     return render_template('index.html')
 
+@app.route('/question', method=['POST'])
+def question():
+
+    question = request.form['question']
+    if question:
+        return jsonify({'question': question})
+    else:
+        return jsonify({"ERROR": "missing question"})
