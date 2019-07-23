@@ -1,9 +1,5 @@
 {% extends 'base.html' %}
 {% block body %}
-{% compress 'css' %}
-<link rel="stylesheet" type="text/sass"
-      href="/static/css/index.sass">
-{% endcompress %}
 <div class="row justify-content-center" id="title">
     <h1>Papy Bot</h1>
 </div>
@@ -13,9 +9,9 @@
              width="300" height=300">
     </div>
     <div id="sentence" class="col-md-5">
-        <p>ot, le grand père de HAL-9000
+        <p>Posez une question à GrandPy bot, le grand père de HAL-9000
             (première génération d'intelligence artificielle dans
-            "2011 L'Odysée de l'espace") ce qu'il pense...
+            "2011 L'Odysée de l'espace") et il vous dira ce qu'il sait.
         </p>
         <div id="question-content">
             <form>
@@ -27,12 +23,13 @@
                 </div>
                 <div class="row justify-content-center">
                     <button type="submit"
-                            formaction="/question"
-                            value="submit"
                             class="btn btn-primary">Demandez à GrandPy</button>
                 </div>
             </form>
         </div>
+        <br>
+        <div id="error-alert"></div>
+        <div id="success-alert"></div>
     </div>
     <div class="col-md-3">
         <img src="{{ url_for('static', filename='img/OC.png')}}"

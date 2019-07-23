@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 {% extends "bootstrap/base.html" %}
 <head>
-  <meta charset="utf-8"\>
-  <title>OC - Papy Bot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"\>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/question.js') }}"></script>
+    {% compress 'css' %}
+    <link rel="stylesheet" type="text/sass"
+          href="/static/css/index.sass">
+    {% endcompress %}
+    <title>OC - Papy Bot</title>
 </head>
 <body>
     {% block body %}
     {% endblock %}
 </body>
 <footer>
-  <div id='footer'>Jérôme Lanteri</div>
+    <div id='footer'>Jérôme Lanteri</div>
 </footer>
