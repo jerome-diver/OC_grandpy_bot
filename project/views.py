@@ -3,6 +3,7 @@
 from flask import Flask, render_template, jsonify, request
 from flask_bootstrap import Bootstrap
 from jac.contrib.flask import JAC
+import wikipediaapi
 
 
 app = Flask(__name__)
@@ -12,6 +13,8 @@ app.config['COMPRESSOR_OUTPUT_DIR'] = './project/static/css'
 app.config['COMPRESSOR_STATIC_PREFIX'] = '/project/static/css'
 jac = JAC(app)
 Bootstrap(app)
+wiki = wikipediaapi.Wikipedia(language='fr',
+                              extract_format=wikipediaapi.ExtractFormat.HTML)
 
 
 @app.route('/')
@@ -21,11 +24,18 @@ def index():
 
     return render_template('index.html')
 
+
 @app.route('/question', methods=['POST'])
 def question():
 
+    from project.super_parser import remove_stop_words
     question = request.form['question']
     if question:
-        return jsonify({'question': question})
+        question = remove_stop_words(question)
+        print("after parsed :", question)
+        answer = wiki.page(question)
+        return jsonify({
+            'question': question,
+            'answer': answer.text })
     else:
         return jsonify({"ERROR": "missing question"})

@@ -3,8 +3,6 @@
 <head>
     <meta charset="utf-8"\>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='js/question.js') }}"></script>
     {% compress 'css' %}
     <link rel="stylesheet" type="text/sass"
           href="/static/css/index.sass">
@@ -15,6 +13,10 @@
     {% block body %}
     {% endblock %}
 </body>
+<div>
+    Bird, Steven, Edward Loper and Ewan Klein (2009).
+Natural Language Processing with Python.  O'Reilly Media Inc.
+</div>
 <footer>
     <div id='footer'>Jérôme Lanteri</div>
 </footer>

@@ -10,8 +10,8 @@ from config import STOP_WORDS_FR
 db = SQLAlchemy(app)
 
 
-class Content(db.Model):
-    """Content a SQL Alchemy ORM Model for Stop Words fr"""
+class StopWord(db.Model):
+    """StopWord a SQL Alchemy ORM Model for Stop Words fr"""
 
     id = db.Column(db.Integer(), primary_key=True)
     word = db.Column(db.String(), nullable=False)
@@ -37,7 +37,7 @@ def init_stopwords():
         db.create_all()
         with open(STOP_WORDS_FR, 'r') as sw_file:
             for word in sw_file:
-                db.session.add(Content(word))
+                db.session.add(StopWord(word.rstrip("\n")))
             db.session.commit()
     except FileNotFoundError as error:
         logger.error(f"{error}\nTry to check your file is in "

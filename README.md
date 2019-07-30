@@ -54,6 +54,7 @@ TDD: TestDriven Development et de façon récursive pour chaque fonctionnalité
 - Flask-Bootstrap4
 - Blinker
 - ipykernel (pour jupyter)
+- nltk (language learning toolkit)
 
 ## Installation
 

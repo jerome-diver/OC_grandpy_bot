@@ -1,21 +1,22 @@
-""" est of module models.py from package project
+"""Test of module models.py from package project
 - function 'init_stop_words'
     will be used as a flask command through imported Click lib
-- class 'Content'
+- class 'StopWord'
     used for handle data content through SQLAlchemy ORM to
     sqlite database
 """
+
 from flask_sqlalchemy import SQLAlchemy
 from logging import INFO, ERROR
 
 from project.views import app
-from project.models import Content, init_stopwords
+from project.models import StopWord, init_stopwords
 from project import models
 from config import STOP_WORDS_FR
 
 
-class TestContent:
-    """Test class Content"""
+class TestStopWord:
+    """Test class StopWord"""
 
     @classmethod
     def setup_class(cls):
@@ -24,10 +25,10 @@ class TestContent:
         cls.word = db.Column(db.String(), nullable=False)
 
     def setup_method(self):
-            self.content = Content("test")
+            self.content = StopWord("test")
 
     def test_init(self):
-        """Test of initialization of Content object instance"""
+        """Test of initialization of StopWord object instance"""
 
         assert self.content.word == "test"
 
