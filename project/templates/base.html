@@ -1,16 +1,24 @@
 <!DOCTYPE html>
-{% extends "bootstrap/base.html" %}
 <head>
-    <meta charset="utf-8"\>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% compress 'css' %}
-    <link rel="stylesheet" type="text/sass"
-          href="/static/css/index.sass">
-    {% endcompress %}
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
     <title>OC - Papy Bot</title>
+    {% endblock %}
+
+    {% endblock %}
 </head>
 <body>
     {% block body %}
+    <!-- body.html template -->
+    {% endblock %}
+    {% block scripts %}
+    <!-- Optional JavaScript -->
+    {{ bootstrap.load_js() }}
     {% endblock %}
 </body>
 <div>

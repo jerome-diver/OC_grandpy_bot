@@ -4,12 +4,12 @@
     <h1>Papy Bot</h1>
 </div>
 <div class="row" id="content-question-row">
-    <div class="col-md-auto">
+    <div class="col-sd-2">
         <img src="{{url_for('static', filename='img/HAL 9000.gif')}}"
-             class="pull-right img-responsive"
-             width="300" height=300">
+             id="hal"
+             class="pull-right img-responsive">
     </div>
-    <div id="sentence" class="col-md-auto">
+    <div id="sentence" class="col-sd-9">
         <p>Posez une question à GrandPy bot, le grand père de HAL-9000
             (première génération d'intelligence artificielle dans
             "2011 L'Odysée de l'espace") et il vous dira ce qu'il sait.
@@ -24,7 +24,9 @@
                 </div>
                 <div class="row justify-content-center">
                     <button type="submit"
-                            class="btn btn-primary">Demandez à GrandPy</button>
+                            class="btn btn-primary">
+                        <i class="fas fa-search"></i> Demandez à GrandPy
+                    </button>
                 </div>
             </form>
         </div>
@@ -41,10 +43,11 @@
                  role="alert" style="display:none;"></div>
         </div>
     </div>
-    <div class="col-md-2">
+    <div class="col-sd-1">
         <img src="{{ url_for('static', filename='img/OC.png')}}"
              class="img-responsive"
-             width="200" height="300"/>
+             id="openclassrooms":w
+        />
     </div>
 </div>
 <div class="row justify-content-md-center">
@@ -54,4 +57,10 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="{{ url_for('static', filename='js/question.js') }}"></script>
+<link rel="stylesheet" type="text/css"
+      href="/static/css/index.css">
+<link rel="shortcut icon"
+      href="{{ url_for('static', filename='img/favicon.ico') }}">
+<link rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.10.1/css/all.css">
 {% endblock %}

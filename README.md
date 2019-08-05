@@ -43,6 +43,8 @@ TDD: TestDriven Development et de façon récursive pour chaque fonctionnalité
 
 - Python-3.7
 - sqlite3
+- pipenv
+- tree-tagger [Tree-tagger is for tag french sentences](https://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/#parfiles)
 
 ### Librairies Python
 
@@ -54,7 +56,8 @@ TDD: TestDriven Development et de façon récursive pour chaque fonctionnalité
 - Flask-Bootstrap4
 - Blinker
 - ipykernel (pour jupyter)
-- nltk (language learning toolkit)
+- treetaggerwrapper (paquet PyPi pour obtenir une indication de chaque mot 
+d'une phrase en français)
 
 ## Installation
 
@@ -63,9 +66,35 @@ Allez là ou vous voulez tester ce projet et clonez ce repo github
 ```bash
 cd ~/OpenClassRooms/test/
 git clone git@github.com:jerome-diver/OC_grandpy_bot.git
-```
-Des dépendances sont requises.
+pipenv install
+pipenv shell
 
+```
+**Des dépendances sont requises:**
+Il aut installer tree-tagger depuis ses sources comme indiqué sur la page du
+ lien.
+ Ce que j'ai fait (mais il est possible de fairte atrement):
+ une fois télécharger:
+  - [le fichier source (pour ma part, je suis sous windows, mais il existe 
+  pour Apple - OSX et Windows)](https://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/tree-tagger-linux-3.2.2.tar.gz)
+  - [le fichier de tag-script](https://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/tagger-scripts.tar.gz)
+  - [le script d'installation](https://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/install-tagger.sh)
+  
+  Le fichier de la langue utilisée (le français) est déjà décompressé dans le 
+  projet, le code s'en sert déjà, mais voici le lien et les infos utiles:
+  - [le fichier du langage utilisé (ici, le français)](https://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/french.par.gz)
+  - [trouvez ici la documentation de la signification des tags](https://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/french-tagset.html)
+ ```bash
+ sudo mkdir opt/TreeTagger
+ sudo mv ~/download/tree-tagger-linux-3.2.2.tar.gz /opt/TreeTagger/
+ sudo mv ~/download/tagger-scripts.tar.gz /opt/TreeTagger/
+ sudo mv ~/download/install-tagger.sh /opt/TreeTagger/ 
+ su
+ cd /opt
+ chmod -755 install-tagger.sh
+ ./install-tagger.sh
+ exit
+ ```
 
 ## Initialisation
 

@@ -6,7 +6,6 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-flask-bootstrap4 = "*"
 pytest = "*"
 flask-testing = "*"
 flask-sqlalchemy = "*"
@@ -16,7 +15,9 @@ pytest-cov = "*"
 blinker = "*"
 jac = "*"
 wikipedia-api = "*"
-nltk = "*"
+numpy = "*"
+treetaggerwrapper = "*"
+bootstrap-flask = "*"
 
 [requires]
 python_version = "3.7"

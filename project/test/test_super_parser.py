@@ -10,4 +10,5 @@ def test_remove_stop_words():
     result should be empty"""
 
     sentence = " ".join(x.word for x in StopWord.query.all())
+    sentence += "     , + 5 _ ' ` @ ) ( ="
     assert remove_stop_words(sentence) == ""
