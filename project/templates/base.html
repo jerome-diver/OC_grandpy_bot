@@ -6,10 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% block styles %}
     <!-- Bootstrap CSS -->
-    {{ bootstrap.load_css() }}
+    {{ bootstrap.load_css(version="4.3.1") }}
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.10.1/css/all.css">
     <title>OC - Papy Bot</title>
     {% endblock %}
-
+    {{ bootstrap.load_js(version="4.3.1",
+                         jquery_version="3.4.1",
+                         popper_version="1.15.0") }}
+    <!-- Optional JavaScript -->
     {% endblock %}
 </head>
 <body>
@@ -17,14 +22,9 @@
     <!-- body.html template -->
     {% endblock %}
     {% block scripts %}
-    <!-- Optional JavaScript -->
-    {{ bootstrap.load_js() }}
     {% endblock %}
 </body>
-<div>
-    Bird, Steven, Edward Loper and Ewan Klein (2009).
-Natural Language Processing with Python.  O'Reilly Media Inc.
-</div>
+<hr>
 <footer>
     <div id='footer'>Jérôme Lanteri</div>
 </footer>

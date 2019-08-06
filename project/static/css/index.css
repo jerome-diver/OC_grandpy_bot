@@ -1,7 +1,7 @@
 
 @import url(https://fonts.googleapis.com/css?family=Abril+Fatface|Anton|Archivo+Black|Coiny|Concert+One|Fredoka+One|Josefin+Sans|Quattrocento+Sans|Raleway|Ubuntu|Work+Sans|ZCOOL+QingKe+HuangYou&display=swap);
 #title h1 {
-  font-family: "Archivo Black", sans-serif;
+  font-family: "Coiny", sans-serif;
   font-size: 40px;
   color: red;
 }
@@ -20,4 +20,8 @@ padding-left: 10px;
 
 #sentence {
   padding: 10px;
+}
+
+#content-question-row {
+  padding : 10px;
 }
