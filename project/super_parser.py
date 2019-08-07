@@ -23,3 +23,15 @@ def remove_stop_words(text: str) -> str:
         if not c:
             no_stop_words.append(word)
     return " ".join(no_stop_words)
+
+
+def extract_principal_verb(text: str) -> str:
+    """Extract principal verb"""
+
+    pass
+
+
+def extract_searching_words(text: str) -> str:
+    """Keep principal words only"""
+
+    pass

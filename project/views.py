@@ -32,13 +32,13 @@ def question():
         question = remove_stop_words(question)
         print("after parsed :", question)
         answer = wiki.page(question)
-        if answer:
+        if answer.text:
             flash(u"j'ai trouvé quelque chose...", "alert-success")
             alert = 'alert-success'
         else:
             flash(u'Hélas, ma mémoire me fait défaut, je suis trop vieux !',
                   "alert-warning")
-            alert = "alert-waring"
+            alert = "alert-warning"
         return jsonify({
             'question': question,
             'answer': answer.text,

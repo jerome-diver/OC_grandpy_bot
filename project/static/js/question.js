@@ -10,7 +10,7 @@ $(document).ready(function() {
       $('#messages').html(data.messages);
       $("#messages").show();
       $("#messages").fadeIn(500);
-      $('#messages').fadeOut(2000);
+      $('#messages').fadeOut(4000);
       if (data.error) {
         console.log("Error")
       } else {
