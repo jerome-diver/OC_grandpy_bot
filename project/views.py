@@ -1,6 +1,6 @@
 """View point file"""
 
-from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask import Flask, render_template, jsonify, request, flash
 from flask_bootstrap import Bootstrap
 import wikipediaapi
 
@@ -32,8 +32,20 @@ def question():
         question = remove_stop_words(question)
         print("after parsed :", question)
         answer = wiki.page(question)
+        if answer:
+            flash(u"j'ai trouvé quelque chose...", "alert-success")
+            alert = 'alert-success'
+        else:
+            flash(u'Hélas, ma mémoire me fait défaut, je suis trop vieux !',
+                  "alert-warning")
+            alert = "alert-waring"
         return jsonify({
             'question': question,
-            'answer': answer.text })
+            'answer': answer.text,
+            'messages': render_template('messages.html', alert=alert)})
     else:
-        return jsonify({"ERROR": "missing question"})
+        flash(u'Pas de question posée', 'alert-danger')
+        return jsonify({
+            "ERROR": "missing question",
+            "messages": render_template("messages.html",
+                                        alert="alert-danger")})

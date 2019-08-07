@@ -31,17 +31,9 @@
             </form>
         </div>
         <br>
-        <div class="row" id="messages">
-            <div id="error-alert"
-                 class="alert alert-danger"
-                 role="alert" style="display:none;"></div>
-            <div id="success-alert"
-                 class="alert alert-success"
-                 role="alert" style="display:none;"></div>
-            <div id="warning-alert"
-                 class="alert alert-warning"
-                 role="alert" style="display:none;"></div>
-        </div>
+        <div class="row" id="messages"
+             style="diplay:none;">{% include 'messages.html' %}</div>
+        <!-- alert messages template -->
     </div>
     <div class="col-md-1">
         <img src="{{ url_for('static', filename='img/OC.png')}}"

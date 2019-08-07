@@ -7,20 +7,14 @@ $(document).ready(function() {
       type: 'POST',
       url: '/question' })
     .done(function(data) {
+      $('#messages').html(data.messages);
+      $("#messages").show();
+      $("#messages").fadeIn(500);
+      $('#messages').fadeOut(2000);
       if (data.error) {
-        $('#error-alert').text(data.error).show();
-        $('#success_alert').hide()
+        console.log("Error")
       } else {
         $('#answer').html(data.answer);
-        $('#error-alert').hide()
-        if ($('#answer').is(':empty')) {
-          $('#warning-alert').text("Hélas, ma mémoire me fait défaut, je suis très vieux.").show();
-        } else {
-          $('#warning-alert').text("J'ai trouvé quelque chose mon grand...")
-          .show();
-        }
-        $('#success-alert').fadeOut(2000);
-        $('#warning-alert').fadeOut(4000);
       }
     });
     event.preventDefault();
