@@ -11,7 +11,7 @@ def remove_stop_words(text: str) -> str:
     # remove non alphabetic's chars
     clean = []
     for word in first_pass.split(" "):
-        clean.append("".join(c for c in word.lower()
+        clean.append("".join(c for c in word
                              if (c.isalpha()
                                  or c == "-")))
     # remove isolated chars

@@ -24,9 +24,15 @@
                 </div>
                 <div class="row justify-content-center">
                     <button type="submit"
-                            class="btn btn-primary">
+                            class="btn btn-primary"
+                            id="submit">
                         <i class="fas fa-search"></i> Demandez à GrandPy
                     </button>
+                    <div class="spinner-border text-primary"
+                         role="status"
+                         id="loading">
+                        <span class="sr-only">Loading...</span>
+                    </div>
                 </div>
             </form>
         </div>
@@ -45,6 +51,14 @@
 <div class="row justify-content-md-center">
     <div class="col-md-1"></div>
     <div class="col-md-9" id="answer"></div>
+    <div class="col-md-2"></div>
+</div>
+<div class="row justify-content-md-center">
+    <div class="col-md-1"></div>
+    <div class="col-md-9">
+        <div id="map"></div>
+        <!--Google map-->
+    </div>
     <div class="col-md-2"></div>
 </div>
 <script src="{{ url_for('static', filename='js/question.js') }}"></script>

@@ -25,3 +25,11 @@ padding-left: 10px;
 #content-question-row {
   padding : 10px;
 }
+
+#map {
+    height: 400px;
+}
+
+#loading {
+  display: none;
+}
