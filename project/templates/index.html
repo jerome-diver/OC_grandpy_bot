@@ -25,14 +25,17 @@
                 <div class="row justify-content-center">
                     <button type="submit"
                             class="btn btn-primary"
-                            id="submit">
-                        <i class="fas fa-search"></i> Demandez à GrandPy
+                            >
+                        <div id="submit">
+                            <i class="fas fa-search"></i> Demandez à GrandPy
+                        </div>
+                        <div id="loading">
+                            <span class="spinner-border spinner-border-sm"
+                                  role="status"
+                                  aria-hidden="true"></span>
+                            Loading...
+                        </div>
                     </button>
-                    <div class="spinner-border text-primary"
-                         role="status"
-                         id="loading">
-                        <span class="sr-only">Loading...</span>
-                    </div>
                 </div>
             </form>
         </div>
