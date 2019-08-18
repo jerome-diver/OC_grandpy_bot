@@ -17,6 +17,8 @@ wikipedia-api = "*"
 numpy = "*"
 treetaggerwrapper = "*"
 bootstrap-flask = "*"
+pymediawiki = "*"
+geodatapython = "*"
 
 [requires]
 python_version = "3.7"

@@ -2,7 +2,6 @@
 
 from flask_testing import TestCase
 from flask import json, url_for
-from project.views import app
 
 
 class TestViews(TestCase):

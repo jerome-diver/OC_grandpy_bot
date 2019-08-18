@@ -1,5 +1,22 @@
 
 $(document).ready(function() {
+  function initMap(latitude, longitude) {
+    if (!latitude) {
+      latitude = 50.45875;
+      longitude = 7.5446;
+    }
+    var location = new google.maps.LatLng(latitude, longitude);
+    var mapCanvas = document.getElementById('map');
+    var mapOptions = {
+      center: location,
+      zoom: 16,
+      panControl: false,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    var map = new google.maps.Map(mapCanvas, mapOptions);
+  }
+  google.maps.event.addDomListener(window, 'load', initMap);
+
   $('form').on('submit', function(event) {
     $("#submit").hide();
     $("#loading").show();
@@ -18,23 +35,9 @@ $(document).ready(function() {
         console.log("Error")
       } else {
         $('#answer').html(data.answer);
+        initMap(data.latitude, data.longitude)
       }
     });
     event.preventDefault();
   });
-});
-
-$(function () {
-  function initMap() {
-    var location = new google.maps.LatLng(50.0875726, 14.4189987);
-    var mapCanvas = document.getElementById('map');
-    var mapOptions = {
-      center: location,
-      zoom: 16,
-      panControl: false,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
-    var map = new google.maps.Map(mapCanvas, mapOptions);
-  }
-  google.maps.event.addDomListener(window, 'load', initMap);
 });
