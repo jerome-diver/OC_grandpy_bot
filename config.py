@@ -19,3 +19,6 @@ TAGPARFILE = str(
     PurePath(str(BASEDIR), "project/static/language/french.par"))
 TAGDIR = "/opt/TreeTagger/"
 GOOGLE_KEY = environ.get('GOOGLE_KEY')
+LOCATION_WORDS = [
+    "rue", 'avenue', 'allée', 'boulevard', 'impasse', 'chemin',
+    'cité', 'route nationale', 'route départementale', 'RN', 'RD' ]

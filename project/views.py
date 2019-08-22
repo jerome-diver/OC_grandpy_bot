@@ -2,14 +2,16 @@
 
 from flask import Flask, render_template, jsonify, request, flash
 from flask_bootstrap import Bootstrap
-from mediawiki import MediaWiki
+
 from config import GOOGLE_KEY
 
 
 app = Flask(__name__)
 app.config.from_object('config')
 bootstrap = Bootstrap(app)
-wiki = MediaWiki("https://fr.wikipedia.org/w/api.php", lang='fr')
+
+
+from project.analyzer import Analyzer
 
 
 @app.route('/')
@@ -23,13 +25,10 @@ def index():
 @app.route('/question', methods=['POST'])
 def question():
 
-    from project.super_parser import Analyzer
     question = request.form['question']
     if question:
         analyze = Analyzer(question)
-        answer = wiki.page(analyze.remove_stop_words())
-        latitude, longitude = analyze.catch_coordinates(answer.references)
-        if answer:
+        if analyze.result:
             flash(u"j'ai trouvé quelque chose...", "alert-success")
             alert = 'alert-success'
         else:
@@ -38,9 +37,11 @@ def question():
             alert = "alert-warning"
         return jsonify(dict(
             question=question,
-            answer=answer.html,
-            latitude=latitude,
-            longitude=longitude,
+            answer=analyze.answer,
+            result=analyze.result,
+            latitude=analyze.latitude,
+            longitude=analyze.longitude,
+            address=analyze.address,
             messages=render_template('messages.html', alert=alert)))
     else:
         flash(u'Pas de question posée', 'alert-danger')

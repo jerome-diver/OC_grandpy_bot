@@ -1,11 +1,6 @@
 
 $(document).ready(function() {
-  function initMap(latitude, longitude) {
-    if (!latitude) {
-      latitude = 50.45875;
-      longitude = 7.5446;
-    }
-    var location = new google.maps.LatLng(latitude, longitude);
+  function initMap(location) {
     var mapCanvas = document.getElementById('map');
     var mapOptions = {
       center: location,
@@ -15,6 +10,23 @@ $(document).ready(function() {
     }
     var map = new google.maps.Map(mapCanvas, mapOptions);
   }
+
+  function getLocationFromAddress(address) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'address': address}, function(results, status) {
+      if (status === 'OK') {
+        return results[0].geometry.location;
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+        return null;
+      }
+    });
+  }
+
+  function getLocationFromCoordinates(latitude, longitude) {
+    return new google.maps.LatLng(latitude, longitude);
+  }
+
   google.maps.event.addDomListener(window, 'load', initMap);
 
   $('form').on('submit', function(event) {
@@ -34,8 +46,14 @@ $(document).ready(function() {
       if (data.error) {
         console.log("Error")
       } else {
-        $('#answer').html(data.answer);
-        initMap(data.latitude, data.longitude)
+        $('#result').html(data.result);
+        if (data.latitude != '') {
+          initMap(getLocationFromCoordinates(data.latitude,
+                                             data.longitude));
+        }
+        else {
+          initMap(getLocationFromAddress(data.address));
+        }
       }
     });
     event.preventDefault();

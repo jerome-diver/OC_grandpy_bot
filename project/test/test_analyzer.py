@@ -1,10 +1,10 @@
-"""Test module super_parser
-- function remove_stop_words"""
+"""Test module analyzer package
+- methods of Analyzer instance object"""
 
-from project.super_parser import Analyzer
+from project.analyzer import Analyzer
 from project.models import StopWord
 
-sentences = [
+SENTENCES = [
     " ".join(x.word for x in StopWord.query.all()) + "     , + 5 _ ' ` @ ) ( =",
     "Connaissez-vous Napoléon ?"
 ]
@@ -13,7 +13,7 @@ sentences = [
 def test_tags():
     """Test tags content presence"""
 
-    analyzer = Analyzer(sentences[1])
+    analyzer = Analyzer(SENTENCES[1])
 
 
 
@@ -21,14 +21,14 @@ def test_remove_stop_words():
     """Get sample of StopWords from database and try function
     result should be empty"""
 
-    analyzer = Analyzer(sentences[0])
+    analyzer = Analyzer(SENTENCES[0])
     assert analyzer.remove_stop_words() == ""
 
 
 def test_extract_tags():
     """Test function to extract principal verb in complicate sentence"""
 
-    analyzer = Analyzer(sentences[1])
+    analyzer = Analyzer(SENTENCES[1])
 
 def test_extarct_verbs():
     """Test extraction of verbs"""
