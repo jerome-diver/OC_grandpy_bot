@@ -147,7 +147,9 @@ class Analyzer(Properties):
     def form_answer_elements(self):
         """Define answer elements for answer sentence"""
 
-        pass
+        if self._result:
+            self._introduction = "Laisse moi te dire ce que j'ai trouvé"
+            self._content = self.resume
 
     def remove_stop_words(self) -> str:
         """Remove stop words"""

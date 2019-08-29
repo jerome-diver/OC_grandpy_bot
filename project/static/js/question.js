@@ -95,8 +95,7 @@ $(document).ready(function() {
           url: "/show_question",
           type: "POST",
           success: function(response) {
-            const question = $.parseHTML(response.question)
-            $("#chat").append(question);
+            $("#chat").append(response.question);
           },
           error: function(xhr) {
             //Do Something to handle error
@@ -106,15 +105,14 @@ $(document).ready(function() {
           url: "/answer",
           type: "POST",
           success: function(response) {
-            const answer = $.parseHTML(response.answer)
-            $("#chat").append(answer);
+            $("#chat").append(response.answer);
           },
           error: function(xhr) {
             //Do Something to handle error
           }
       });
 
-        $('#result').html(data.answer);
+        $('#result').html(data.result);
         var location = null;
         if (data.latitude != '') {
           location = getLocationFromCoordinates(data.latitude,
