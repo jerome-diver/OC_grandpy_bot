@@ -95,7 +95,8 @@ $(document).ready(function() {
           url: "/show_question",
           type: "POST",
           success: function(response) {
-            $("#chat").append(response.question).html();
+            const question = $.parseHTML(response.question)
+            $("#chat").append(question);
           },
           error: function(xhr) {
             //Do Something to handle error
@@ -105,7 +106,8 @@ $(document).ready(function() {
           url: "/answer",
           type: "POST",
           success: function(response) {
-            $("#chat").append(response.answer).html();
+            const answer = $.parseHTML(response.answer)
+            $("#chat").append(answer);
           },
           error: function(xhr) {
             //Do Something to handle error
