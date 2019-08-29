@@ -1,6 +1,6 @@
 """View point file"""
 
-from flask import Flask, render_template, jsonify, request, flash
+from flask import Flask, render_template, jsonify, request, flash, Markup
 from flask_assets import Environment, Bundle
 from flask_bootstrap import Bootstrap
 
@@ -60,7 +60,8 @@ def answer():
     """Send an answer to AJAX call answer.js"""
 
     return jsonify(dict(
-        answer=render_template("answer.html", answer=ANALYZE.answer)))
+        answer=render_template("answer.html",
+                               answer=Markup(ANALYZE.answer))))
 
 
 @app.route('/show_question', methods=['POST'])
@@ -68,4 +69,5 @@ def show_question():
     """Return question template to add"""
 
     return jsonify(dict(
-        question=render_template('question.html', question=ANALYZE.question)))
+        question=render_template('question.html',
+                                 question=ANALYZE.question)))
