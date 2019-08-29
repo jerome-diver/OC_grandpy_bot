@@ -14,8 +14,8 @@ padding-left: 10px;
 
 #openclassrooms {
   padding-right: 10px;
-  height: 100px;
-  width: 20%;
+  height: 200px;
+  width: 100%;
 }
 
 #sentence {
@@ -27,9 +27,24 @@ padding-left: 10px;
 }
 
 #map {
-    height: 400px;
+    height: 200px;
+    width:  50%;
 }
 
 #loading {
   display: none;
+}
+
+.dialog {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+/* Darker chat container */
+.question {
+  border-color: #ccc;
+  background-color: #ddd;
 }

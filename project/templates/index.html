@@ -51,21 +51,16 @@
         />
     </div>
 </div>
-<div class="row justify-content-md-center">
-    <article id="chat"></article>
-</div>
-<div class="row justify-content-md-center">
-    <div class="col-md-1"></div>
-    <div class="col-md-9" id="result"></div>
-    <div class="col-md-2"></div>
-</div>
-<div class="row justify-content-md-center">
-    <div class="col-md-1"></div>
+<div class="row">
+    <div class="col-md-2" id="map"></div>
     <div class="col-md-9">
-        <div id="map"></div>
-        <!--Google map-->
+        <article id="chat"></article>
     </div>
+</div>
+<div class="row justify-content-md-center">
     <div class="col-md-2"></div>
+    <div class="col-md-9" id="result"></div>
+    <div class="col-md-1"></div>
 </div>
 <script src="{{ url_for('static', filename='js/question.js') }}"></script>
 <script src="{{ url_for('static', filename='js/moment-locales.min.js') }}"></script>

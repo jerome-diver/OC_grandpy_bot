@@ -76,8 +76,9 @@ class Properties:
         """Property for self._answer"""
 
         if self._result:
-            return Markup(f"<p>{escape(self._introduction)}</p>" \
-                f"<p>{escape(self._content)}</p>" \
+            return Markup(
+                f"<p>{escape(self._introduction)}</p>"
+                f"<p>{self._content}</p>"
                 f"<p>{escape(self._last)}</p>")
         else:
             return f'<p>Je ne sais rien à ce propos, je suis désolé.</p>'
@@ -140,8 +141,9 @@ class Analyzer(Properties):
             if not self.has_coordinates():
                 self.catch_address()
             self._result = self._wiki.html
+            self._title = WIKI.suggest(self._query)
             self._titles.append(WIKI.suggest(self._question))
-            self._titles.append(WIKI.suggest(self._query))
+            self._titles.append(self.title)
             self._possibilities.append(WIKI.search(self._question))
             self._possibilities.append(WIKI.search(self._query))
 
