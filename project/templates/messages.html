@@ -1,5 +1,4 @@
-{% with messages =
-get_flashed_messages(with_categories=true) %}
+{% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         <div id="alert-error"
              class="alert {{ alert }}"

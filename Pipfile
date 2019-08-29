@@ -19,6 +19,7 @@ treetaggerwrapper = "*"
 bootstrap-flask = "*"
 pymediawiki = "*"
 geodatapython = "*"
+flask-assets = "*"
 
 [requires]
 python_version = "3.7"

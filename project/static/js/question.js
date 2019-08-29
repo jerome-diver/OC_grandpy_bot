@@ -1,6 +1,9 @@
-
 $(document).ready(function() {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  console.log(tz);
+  console.log(moment().format('LTS'))
   function initMap(location) {
+
     var mapCanvas = document.getElementById('map');
     var mapOptions = {
       center: location,
@@ -9,6 +12,7 @@ $(document).ready(function() {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
     var map = new google.maps.Map(mapCanvas, mapOptions);
+    return map;
   }
 
   function getLocationFromAddress(address) {
@@ -23,8 +27,46 @@ $(document).ready(function() {
     });
   }
 
+  //function getBrowserLocation() {
+  //  if (navigator.geolocation) {
+  //    navigator.geolocation.getCurrentPosition(
+  //      function(position) {
+  //        var pos = {
+  //          lat: position.coords.latitude,
+  //          lng: position.coords.longitude
+  //        };
+
+   //     }, function() {  });
+   //  } else {
+   //    // Browser doesn't support Geolocation
+   //    //handleLocationError(false, infoWindow, map.getCenter());
+   //  }
+  //}
+
+  //function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+  //  infoWindow.setPosition(pos);
+  //  infoWindow.setContent(browserHasGeolocation ?
+  //                        'Error: The Geolocation service failed.' :
+  //                        'Error: Your browser doesn\'t support geolocation
+  //.');
+  //  infoWindow.open(map);
+  //}
+
   function getLocationFromCoordinates(latitude, longitude) {
     return new google.maps.LatLng(latitude, longitude);
+  }
+
+  function mark(map, location, title, content) {
+  var infoWindow = new google.maps.InfoWindow({
+          content: content });
+  var marker = new google.maps.Marker({
+              map: map,
+              position: location,
+              animation: google.maps.Animation.BOUNCE,
+              label: title
+            });
+  marker.addListener('click', function() {
+          infoWindow.open(map, marker); });
   }
 
   google.maps.event.addDomListener(window, 'load', initMap);
@@ -37,6 +79,8 @@ $(document).ready(function() {
       type: 'POST',
       url: '/question' })
     .done(function(data) {
+      var old_question = $('textarea#question').val()
+      
       $("#submit").show();
       $("#loading").hide();
       $('#messages').html(data.messages);
@@ -46,14 +90,39 @@ $(document).ready(function() {
       if (data.error) {
         console.log("Error")
       } else {
-        $('#result').html(data.result);
+
+        $.ajax({
+          url: "/show_question",
+          type: "POST",
+          success: function(response) {
+            $("#chat").append(response.question).html();
+          },
+          error: function(xhr) {
+            //Do Something to handle error
+          }
+      });
+        $.ajax({
+          url: "/answer",
+          type: "POST",
+          success: function(response) {
+            $("#chat").append(response.answer).html();
+          },
+          error: function(xhr) {
+            //Do Something to handle error
+          }
+      });
+
+        $('#result').html(data.answer);
+        var location = null;
         if (data.latitude != '') {
-          initMap(getLocationFromCoordinates(data.latitude,
-                                             data.longitude));
+          location = getLocationFromCoordinates(data.latitude,
+                                                data.longitude);
         }
         else {
-          initMap(getLocationFromAddress(data.address));
+          location = getLocationFromAddress(data.address);
         }
+        var map = initMap(location);
+        mark(map, location, data.title, data.resume)
       }
     });
     event.preventDefault();

@@ -22,3 +22,8 @@ GOOGLE_KEY = environ.get('GOOGLE_KEY')
 LOCATION_WORDS = [
     "rue", 'avenue', 'allée', 'boulevard', 'impasse', 'chemin',
     'cité', 'route nationale', 'route départementale', 'RN', 'RD' ]
+POSSIBLE_ANSWER = ["Je ne sais plus, je ne me rapelle plus de tout ça.",
+                   "J'ai des souvenirs, plein... il me faut plus de "
+                   "précision. Voici ce dont je me rapelle :",
+                   "Je me rapelle bien quand j'étais gamin...",
+                   "Salut, de quoi veux-tu que je te parle ?"]

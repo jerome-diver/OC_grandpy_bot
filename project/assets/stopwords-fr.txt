@@ -514,6 +514,7 @@ s
 sa
 sacrebleu
 sait
+salut
 sans
 sapristi
 sauf
