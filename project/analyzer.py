@@ -3,6 +3,7 @@
 import re
 from treetaggerwrapper import TreeTagger as tt
 from mediawiki import MediaWiki
+from jinja2 import Markup, escape
 
 from .models import StopWord
 from config import TAGPARFILE, TAGDIR
@@ -75,9 +76,9 @@ class Properties:
         """Property for self._answer"""
 
         if self._result:
-            return f"<p>{self._introduction}</p>" \
-                f"<p>{self._content}</p>" \
-                f"<p>{self._last}</p>"
+            return Markup(f"<p>{escape(self._introduction)}</p>" \
+                f"<p>{escape(self._content)}</p>" \
+                f"<p>{escape(self._last)}</p>")
         else:
             return f'<p>Je ne sais rien à ce propos, je suis désolé.</p>'
 

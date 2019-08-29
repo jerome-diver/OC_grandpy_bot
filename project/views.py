@@ -61,7 +61,7 @@ def answer():
 
     return jsonify(dict(
         answer=render_template("answer.html",
-                               answer=Markup(ANALYZE.answer))))
+                               answer=ANALYZE.answer)))
 
 
 @app.route('/show_question', methods=['POST'])
