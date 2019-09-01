@@ -4,12 +4,20 @@ import re
 from treetaggerwrapper import TreeTagger as tt
 from mediawiki import MediaWiki
 from jinja2 import Markup, escape
+from enum import Enum
 
 from .models import StopWord
 from config import TAGPARFILE, TAGDIR
 
 
 WIKI = MediaWiki("https://fr.wikipedia.org/w/api.php", lang='fr')
+
+
+class Removed(Enum):
+
+    NOTHING = 1
+    STOP_WORDS = 2
+    STOP_WORDS_VERBS = 3
 
 
 class Properties:
@@ -105,54 +113,12 @@ class Properties:
         return "Nothing found"
 
 
-class Analyzer(Properties):
+class Tools():
 
-    COORDINATES = re.compile(r'^https:\/\/.*maps\/.*\@(\d+\.\d+),(\d+.\d+).*')
     VERB = re.compile(r'VER:.*')
 
     def __init__(self):
-
-        super().__init__()
-        self._tags = None
-        self._verbs = []
-        self._query = None
-        self._searching = None
-        self._titles = []
-        self._wiki = None
-        self._possibilities = []
-
-    def ask(self, question: str):
-        """Ask question, then provide analisis"""
-
-        self._question = question
-        self.collect_data()
-        self.form_answer_elements()
-
-    def collect_data(self):
-        """Provide analysis to get relevant MediaWiki data from query"""
-
-        self._tags = self.get_tags()
-        self._verbs = self.extract_verbs()
-        self._query = self.remove_stop_words()
-        self._searching = self.extract_searching_words()
-        if self._query:
-            self._wiki = WIKI.page(self._query)
-            self.catch_coordinates()
-            if not self.has_coordinates():
-                self.catch_address()
-            self._result = self._wiki.html
-            self._title = WIKI.suggest(self._query)
-            self._titles.append(WIKI.suggest(self._question))
-            self._titles.append(self.title)
-            self._possibilities.append(WIKI.search(self._question))
-            self._possibilities.append(WIKI.search(self._query))
-
-    def form_answer_elements(self):
-        """Define answer elements for answer sentence"""
-
-        if self._result:
-            self._introduction = "Laisse moi te dire ce que j'ai trouvé"
-            self._content = self.resume
+        self._input = None
 
     def remove_stop_words(self) -> str:
         """Remove stop words"""
@@ -162,7 +128,7 @@ class Analyzer(Properties):
         # remove non alphabetic's chars
         clean = ["".join(c for c in word if c.isalpha())
                  for word in
-                 self._question.strip()
+                 self._input.strip()
                      .translate(str.maketrans("'-", "  "))
                      .split(" ")]
         # remove stop words and isolate chars
@@ -172,26 +138,96 @@ class Analyzer(Properties):
                               .first()]
         return " ".join(nsw)
 
+    def remove_verbs(self) -> str:
+        """remove verbs from self._query"""
+
+        without_verbs = [word for word in self._input.split(" ")
+                         if word not in
+                         [tag[0] for tag in self.extract_verbs()] ]
+        return " ".join(without_verbs)
+
     def get_tags(self):
         """Get tags from TreeTagger"""
 
         tagger = tt(TAGDIR=TAGDIR, TAGPARFILE=TAGPARFILE, TAGLANG='fr')
         return [tuple(tag.split("\t"))
-                for tag in tagger.tag_text(self._question)]
+                for tag in tagger.tag_text(self._input)]
 
     def extract_verbs(self) -> list:
         """Extract principal verb"""
 
-        return [tag for tag in self._tags
+        return [tag for tag in self.get_tags()
                 if self.VERB.match(tag[1])]
 
-    def extract_searching_words(self) -> str:
-        """remove verbs from self._query"""
 
-        without_verbs = [word for word in self._query.split(" ")
-                         if word not in
-                         [tag[0] for tag in self._verbs] ]
-        return " ".join(without_verbs)
+class QueryData(Tools):
+    """Create query to get result oriented searching form factory"""
+
+    def __init__(self):
+
+        super().__init__()
+        self._original = None
+        self._query_analyzed = None
+        self._searching = None
+        self._suggested_title = None
+        self._tags = []
+        self._wiki = None
+
+    def define(self, query : str,  form : Removed):
+        """Define query form and process other owned definition linked"""
+
+        self._original = query
+        self._input = query
+        if form == Removed.STOP_WORDS:
+            self._query_analyzed = self.remove_stop_words()
+        elif form == Removed.STOP_WORDS_VERBS:
+            self._input = self.remove_stop_words()
+            self._query_analyzed = self.remove_verbs()
+        self._wiki = WIKI.page(self._query_analyzed)
+        self._tags = self.get_tags()
+        self._suggested_title = WIKI.suggest(self._query_analyzed)
+        self._searching = WIKI.search()
+
+
+class Analyzer(Properties):
+
+    COORDINATES = re.compile(r'^https:\/\/.*maps\/.*\@(\d+\.\d+),(\d+.\d+).*')
+
+    def __init__(self):
+
+        super().__init__()
+        self._queries = dict(
+            ORIGINAL=QueryData(),
+            NO_SW=QueryData(),
+            No_SW_VERB=QueryData())
+        self._possibilities = []
+
+    def ask(self, question: str):
+        """Ask question, then provide analisis"""
+
+        self._question = question
+        self._queries["ORIGINAL"].define(question, Removed.NOTHING)
+        self._queries["NO_SW"].define(question, Removed.STOP_WORDS)
+        self._queries["NO_SW_VERB"].define(question,
+                                           Removed.STOP_WORDS_VERBS)
+        self.collect_data()
+        self.form_answer_elements()
+
+    def collect_data(self):
+        """Provide analysis to get relevant MediaWiki data from query"""
+
+        if self._query:
+            self.catch_coordinates()
+            if not self.has_coordinates():
+                self.catch_address()
+            self._result = self._wiki.html
+
+    def form_answer_elements(self):
+        """Define answer elements for answer sentence"""
+
+        if self._result:
+            self._introduction = "Laisse moi te dire ce que j'ai trouvé"
+            self._content = self.resume
 
     def catch_coordinates(self):
         """Catch latitude and longitude coordinates from text page html"""
@@ -220,3 +256,4 @@ class Analyzer(Properties):
         """Catch an address from wiki text result"""
 
         self._address = ""
+
