@@ -32,8 +32,9 @@ class Properties:
         self._title = None
         self._resume = None
         self._introduction = None
-        self._content = None
+        self._content = str
         self._last = None
+        self._possibilities = []
 
     @property
     def question(self):
@@ -83,7 +84,7 @@ class Properties:
     def answer(self):
         """Property for self._answer"""
 
-        if self._result:
+        if self._possibilities:
             return Markup(
                 f"<p>{escape(self._introduction)}</p>"
                 f"<p>{self._content}</p>"
@@ -173,7 +174,7 @@ class QueryData(Tools):
         self._tags = []
         self._wiki = None
 
-    def define(self, query : str,  form : Removed):
+    def define(self, query: str,  form: Removed):
         """Define query form and process other owned definition linked"""
 
         self._original = query
@@ -183,10 +184,15 @@ class QueryData(Tools):
         elif form == Removed.STOP_WORDS_VERBS:
             self._input = self.remove_stop_words()
             self._query_analyzed = self.remove_verbs()
-        self._wiki = WIKI.page(self._query_analyzed)
+        else:
+            self._query_analyzed = query
+        print("ANALYZE QUERY IS:", self._query_analyzed)
+       # self._wiki = WIKI.page(self._query_analyzed)
         self._tags = self.get_tags()
         self._suggested_title = WIKI.suggest(self._query_analyzed)
-        self._searching = WIKI.search()
+        self._searching = WIKI.search(self._query_analyzed,
+                                      suggestion = False,
+                                      results=5)
 
 
 class Analyzer(Properties):
@@ -199,19 +205,37 @@ class Analyzer(Properties):
         self._queries = dict(
             ORIGINAL=QueryData(),
             NO_SW=QueryData(),
-            No_SW_VERB=QueryData())
-        self._possibilities = []
+            NO_SW_VERB=QueryData())
 
     def ask(self, question: str):
         """Ask question, then provide analisis"""
 
         self._question = question
         self._queries["ORIGINAL"].define(question, Removed.NOTHING)
-        self._queries["NO_SW"].define(question, Removed.STOP_WORDS)
         self._queries["NO_SW_VERB"].define(question,
                                            Removed.STOP_WORDS_VERBS)
-        self.collect_data()
-        self.form_answer_elements()
+        self._queries["NO_SW"].define(question, Removed.STOP_WORDS)
+        self.get_suggestions()
+        if self._possibilities:
+            self._content = ""
+            self._introduction = "Cela me fait penser à plusieurs choses, " \
+                                "de quoi est-il question plus précisément ?"
+            for index, possible in enumerate(self._possibilities):
+                self._content += f"{index + 1}) {possible}\n"
+            self._last = "Fais un choix dans cette liste mon grand..."
+        #self.collect_data()
+        #self.form_answer_elements()
+
+    def make_the_choice(self, choice: int):
+        """Return answer corresponding to the choice"""
+
+        pass
+
+    def get_suggestions(self):
+        """populate self._possibilities"""
+
+        for query in self._queries.values():
+            self._possibilities += query._searching
 
     def collect_data(self):
         """Provide analysis to get relevant MediaWiki data from query"""
