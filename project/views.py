@@ -32,9 +32,12 @@ def question():
     alert = "alert-success"
     if question:
         ANALYZE.ask(question)
-        if ANALYZE.find_something() == 1:
+        found = ANALYZE.find_something()
+        print("found value", found, "\nanswer:", ANALYZE.answer)
+        if found == 1:
             flash(u"j'ai trouvé quelque chose...", alert)
             return jsonify(dict(
+                found=1,
                 question=question,
                 title=ANALYZE.title,
                 answer=ANALYZE.answer,
@@ -43,13 +46,24 @@ def question():
                 longitude=ANALYZE.longitude,
                 address=ANALYZE.address,
                 messages=render_template('messages.html', alert=alert)))
-        elif ANALYZE.find_something() == 2:
+        elif found == 2:
             flash(u'Il y a plusieurs possibilités...', alert)
+            return jsonify(dict(
+                found=2,
+                question=question,
+                title=ANALYZE.title,
+                answer=ANALYZE.answer,
+                resume=ANALYZE.resume,
+                latitude=ANALYZE.latitude,
+                longitude=ANALYZE.longitude,
+                address=ANALYZE.address,
+                messages=render_template('messages.html', alert=alert)))
         else:
             alert = "alert-warning"
             flash(u'Hélas, ma mémoire me fait défaut, je suis trop vieux !',
                   alert)
             return jsonify(dict(
+                found=0,
                 answer=False,
                 messages=render_template('messages.html', alert=alert)))
     else:
@@ -75,4 +89,4 @@ def show_question():
 
     return jsonify(dict(
         question=render_template('question.html',
-                                 question=ANALYZE.question)))
+                                 question=ANALYZE.answer)))

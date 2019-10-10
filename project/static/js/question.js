@@ -90,6 +90,7 @@ $(document).ready(function() {
       if (data.error) {
         console.log("Error")
       } else {
+        if (data.found == 1)
         $.ajax({
           url: "/answer",
           type: "POST",
@@ -100,7 +101,7 @@ $(document).ready(function() {
             //Do Something to handle error
           }
         });
-        if data.answer {
+        if (data.found == 2) {
           $.ajax({
             url: "/show_question",
             type: "POST",

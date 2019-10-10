@@ -33,7 +33,7 @@ class Properties:
         self._introduction = None
         self._content = ""
         self._last = None
-        self._possibilities = []
+        self._possibilities = set()
 
     @property
     def question(self):
@@ -83,11 +83,18 @@ class Properties:
     def answer(self):
         """Property for self._answer"""
 
-        if self._possibilities:
+        if len(self._possibilities) == 1:
             return Markup(
                 f"<p>{escape(self._introduction)}</p>"
                 f"<p>{self._content}</p>"
                 f"<p>{escape(self._last)}</p>")
+        elif len(self._possibilities) > 1:
+            text = "<p>Oui, mais à quel propos ?<br>" \
+                   "Quel est le contexte s'il te plaît ?</p>"
+            for index, possibility in enumerate(self._possibilities):
+                text += f"<p>{index + 1}) {possibility}<br>"
+            text += "</p>"
+            return Markup(text)
         else:
             return f'<p>Je ne sais rien à ce propos, je suis désolé.</p>'
 
@@ -183,7 +190,7 @@ class QueryData(Tools):
             self._query_analyzed = self.remove_verbs()
         else:
             self._query_analyzed = query
-        print("ANALYZE QUERY IS:", self._query_analyzed)
+        print(f"ANALYZE QUERY FOR {self._form} IS:", self._query_analyzed)
         self._wiki = self.WIKI.page(self._query_analyzed)
 
     @property
@@ -256,8 +263,9 @@ class Analyzer(Properties):
         for query in self._queries.values():
             query.define(question)
             found = query.searching
+            print("FOUND:", found)
             if found:
-                self._possibilities += query.searching
+                self._possibilities |= set(found)
 
     def find_something(self) -> int:
         if len(self._possibilities) > 1:
