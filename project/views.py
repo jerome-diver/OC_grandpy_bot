@@ -29,30 +29,35 @@ def question():
     """Send a question to AJAX call question.js"""
 
     question = request.form['question']
+    alert = "alert-success"
     if question:
         ANALYZE.ask(question)
-        if ANALYZE.result:
-            flash(u"j'ai trouvé quelque chose...", "alert-success")
-            alert = 'alert-success'
+        if ANALYZE.find_something() == 1:
+            flash(u"j'ai trouvé quelque chose...", alert)
+            return jsonify(dict(
+                question=question,
+                title=ANALYZE.title,
+                answer=ANALYZE.answer,
+                resume=ANALYZE.resume,
+                latitude=ANALYZE.latitude,
+                longitude=ANALYZE.longitude,
+                address=ANALYZE.address,
+                messages=render_template('messages.html', alert=alert)))
+        elif ANALYZE.find_something() == 2:
+            flash(u'Il y a plusieurs possibilités...', alert)
         else:
-            flash(u'Hélas, ma mémoire me fait défaut, je suis trop vieux !',
-                  "alert-warning")
             alert = "alert-warning"
-        return jsonify(dict(
-            question=question,
-            title=ANALYZE.title,
-            answer=ANALYZE.answer,
-            resume=ANALYZE.resume,
-            latitude=ANALYZE.latitude,
-            longitude=ANALYZE.longitude,
-            address=ANALYZE.address,
-            messages=render_template('messages.html', alert=alert)))
+            flash(u'Hélas, ma mémoire me fait défaut, je suis trop vieux !',
+                  alert)
+            return jsonify(dict(
+                answer=False,
+                messages=render_template('messages.html', alert=alert)))
     else:
-        flash(u'Pas de question posée', 'alert-danger')
+        alert="alert-danger"
+        flash(u'Pas de question posée', alert)
         return jsonify({
             "ERROR": "missing question",
-            "messages": render_template("messages.html",
-                                        alert="alert-danger")})
+            "messages": render_template("messages.html", alert=alert)})
 
 
 @app.route('/answer', methods=['POST'])

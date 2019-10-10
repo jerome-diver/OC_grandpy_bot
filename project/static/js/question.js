@@ -90,17 +90,6 @@ $(document).ready(function() {
       if (data.error) {
         console.log("Error")
       } else {
-
-        $.ajax({
-          url: "/show_question",
-          type: "POST",
-          success: function(response) {
-            $("#chat").append(response.question);
-          },
-          error: function(xhr) {
-            //Do Something to handle error
-          }
-      });
         $.ajax({
           url: "/answer",
           type: "POST",
@@ -110,19 +99,32 @@ $(document).ready(function() {
           error: function(xhr) {
             //Do Something to handle error
           }
-      });
+        });
+        if data.answer {
+          $.ajax({
+            url: "/show_question",
+            type: "POST",
+            success: function(response) {
+              $("#chat").append(response.question);
+            },
+            error: function(xhr) {
+              //Do Something to handle error
+            }
+          });
+          $('#result').html(data.result);
+          var location = null;
+          if (data.latitude != '') {
+            location = getLocationFromCoordinates(data.latitude,
+                                                  data.longitude);
+          }
+          else {
+            location = getLocationFromAddress(data.address);
+          }
+          var map = initMap(location);
+          mark(map, location, data.title, data.resume)
+        } else {
 
-        $('#result').html(data.result);
-        var location = null;
-        if (data.latitude != '') {
-          location = getLocationFromCoordinates(data.latitude,
-                                                data.longitude);
         }
-        else {
-          location = getLocationFromAddress(data.address);
-        }
-        var map = initMap(location);
-        mark(map, location, data.title, data.resume)
       }
     });
     event.preventDefault();

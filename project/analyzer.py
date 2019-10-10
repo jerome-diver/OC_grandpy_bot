@@ -10,9 +10,6 @@ from .models import StopWord
 from config import TAGPARFILE, TAGDIR
 
 
-WIKI = MediaWiki("https://fr.wikipedia.org/w/api.php", lang='fr')
-
-
 class Removed(Enum):
 
     NOTHING = 1
@@ -21,6 +18,8 @@ class Removed(Enum):
 
 
 class Properties:
+
+    WIKI = MediaWiki("https://fr.wikipedia.org/w/api.php", lang='fr')
 
     def __init__(self):
 
@@ -32,7 +31,7 @@ class Properties:
         self._title = None
         self._resume = None
         self._introduction = None
-        self._content = str
+        self._content = ""
         self._last = None
         self._possibilities = []
 
@@ -109,7 +108,7 @@ class Properties:
         """Property for self._result"""
 
         if self._title:
-            text = WIKI.summary(title=self._title, sentences=2)
+            text = self.WIKI.summary(title=self._title, sentences=2)
             return f"<h2>{self._title}</h2><p>{text}</p>"
         return "Nothing found"
 
@@ -164,35 +163,78 @@ class Tools():
 class QueryData(Tools):
     """Create query to get result oriented searching form factory"""
 
-    def __init__(self):
+    WIKI = MediaWiki("https://fr.wikipedia.org/w/api.php", lang='fr')
+
+    def __init__(self, form: Removed):
 
         super().__init__()
-        self._original = None
+        self._form = form
         self._query_analyzed = None
-        self._searching = None
-        self._suggested_title = None
-        self._tags = []
         self._wiki = None
 
-    def define(self, query: str,  form: Removed):
+    def define(self, query: str):
         """Define query form and process other owned definition linked"""
 
-        self._original = query
         self._input = query
-        if form == Removed.STOP_WORDS:
+        if self._form == Removed.STOP_WORDS:
             self._query_analyzed = self.remove_stop_words()
-        elif form == Removed.STOP_WORDS_VERBS:
+        elif self._form == Removed.STOP_WORDS_VERBS:
             self._input = self.remove_stop_words()
             self._query_analyzed = self.remove_verbs()
         else:
             self._query_analyzed = query
         print("ANALYZE QUERY IS:", self._query_analyzed)
-       # self._wiki = WIKI.page(self._query_analyzed)
-        self._tags = self.get_tags()
-        self._suggested_title = WIKI.suggest(self._query_analyzed)
-        self._searching = WIKI.search(self._query_analyzed,
-                                      suggestion = False,
-                                      results=5)
+        self._wiki = self.WIKI.page(self._query_analyzed)
+
+    @property
+    def wiki(self):
+        """wiki property"""
+
+        return self._wiki
+
+    @property
+    def resume(self):
+        """Resume property"""
+
+        return self._wiki.summary()
+
+    @property
+    def searching(self):
+        """searching property from MEDIAWIKI"""
+
+        return self.WIKI.search(self._query_analyzed,
+                                suggestion=False,
+                                results=5)
+
+    @property
+    def suggested_title(self):
+        """suggested_title property from MEDIAWIKI"""
+
+        return self.WIKI.suggest(self._query_analyzed)
+
+    @property
+    def tags(self):
+        """tags property from Tools tags words"""
+
+        return self.get_tags()
+
+    @property
+    def coordinates(self):
+        """coordinates property from MEDIAWIKI"""
+
+        return self._wiki.coordinates
+
+    @property
+    def references(self):
+        """references property from MEDIAWIKI"""
+
+        return self._wiki.references
+
+    @property
+    def page(self):
+        """html page property from MEDIAWIKI"""
+
+        return self._wiki.html
 
 
 class Analyzer(Properties):
@@ -203,65 +245,63 @@ class Analyzer(Properties):
 
         super().__init__()
         self._queries = dict(
-            ORIGINAL=QueryData(),
-            NO_SW=QueryData(),
-            NO_SW_VERB=QueryData())
+            ORIGINAL=QueryData(Removed.NOTHING),
+            NO_SW=QueryData(Removed.STOP_WORDS),
+            NO_SW_VERB=QueryData(Removed.STOP_WORDS_VERBS))
 
     def ask(self, question: str):
-        """Ask question, then provide analisis"""
+        """Ask question"""
 
         self._question = question
-        self._queries["ORIGINAL"].define(question, Removed.NOTHING)
-        self._queries["NO_SW_VERB"].define(question,
-                                           Removed.STOP_WORDS_VERBS)
-        self._queries["NO_SW"].define(question, Removed.STOP_WORDS)
-        self.get_suggestions()
-        if self._possibilities:
-            self._content = ""
+        for query in self._queries.values():
+            query.define(question)
+            found = query.searching
+            if found:
+                self._possibilities += query.searching
+
+    def find_something(self) -> int:
+        if len(self._possibilities) > 1:
             self._introduction = "Cela me fait penser à plusieurs choses, " \
                                 "de quoi est-il question plus précisément ?"
             for index, possible in enumerate(self._possibilities):
                 self._content += f"{index + 1}) {possible}\n"
             self._last = "Fais un choix dans cette liste mon grand..."
-        #self.collect_data()
-        #self.form_answer_elements()
+            return 2
+        elif len(self._possibilities) == 1:
+            self.collect_data(self._possibilities[0])
+            self.form_answer_elements()
+            return 1
+        return 0
 
-    def make_the_choice(self, choice: int):
-        """Return answer corresponding to the choice"""
+    def send_choice(self, choice: int):
+        """Get answer corresponding to the choice"""
 
         pass
 
-    def get_suggestions(self):
-        """populate self._possibilities"""
-
-        for query in self._queries.values():
-            self._possibilities += query._searching
-
-    def collect_data(self):
+    def collect_data(self, query):
         """Provide analysis to get relevant MediaWiki data from query"""
 
-        if self._query:
-            self.catch_coordinates()
-            if not self.has_coordinates():
-                self.catch_address()
-            self._result = self._wiki.html
+        self.catch_coordinates(query)
+        if not self.has_coordinates():
+            self.catch_address(query)
+        self._result = query.page
 
     def form_answer_elements(self):
         """Define answer elements for answer sentence"""
 
         if self._result:
-            self._introduction = "Laisse moi te dire ce que j'ai trouvé"
+            self._introduction = "Voilà ce que j'ai trouvé"
             self._content = self.resume
 
-    def catch_coordinates(self):
+    def catch_coordinates(self, query):
         """Catch latitude and longitude coordinates from text page html"""
 
-        coordinates = self._wiki.coordinates
+        coordinates = query.coordinates
         if coordinates:
             self._latitude = float(coordinates[0])
             self._longitude = float(coordinates[1])
         else:
-            for ref in self._wiki.references:
+            for ref in query.references:
                 found = self.COORDINATES.match(ref)
                 if found:
                     self.latitude = found.group(1)
@@ -276,7 +316,7 @@ class Analyzer(Properties):
 
         return self._latitude is not None and self._longitude is not None
 
-    def catch_address(self):
+    def catch_address(self, query):
         """Catch an address from wiki text result"""
 
         self._address = ""
