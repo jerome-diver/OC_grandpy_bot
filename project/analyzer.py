@@ -92,8 +92,7 @@ class Properties:
             text = "<p>Oui, mais à quel propos ?<br>" \
                    "Quel est le contexte s'il te plaît ?</p>"
             for index, possibility in enumerate(self._possibilities):
-                text += f"<p>{index + 1}) {possibility}<br>"
-            text += "</p>"
+                text += f"<button id=choice_{index}>{possibility}</button><br>"
             return Markup(text)
         else:
             return f'<p>Je ne sais rien à ce propos, je suis désolé.</p>'
