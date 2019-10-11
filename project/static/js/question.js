@@ -91,7 +91,7 @@ $(document).ready(function() {
       url: '/question' })
     .done(function(data) {
       var old_question = $('input#question').val()
-      
+      $("input#question").val('');
       $("#submit").show();
       $("#loading").hide();
       $('#messages').html(data.messages);
