@@ -71,7 +71,8 @@ $(document).ready(function() {
 
   google.maps.event.addDomListener(window, 'load', initMap);
 
-  $('form').on('submit', function(event) {
+  $("#dialog-question").on('submit', function(event) {
+    console.log("OK");
     $("#submit").hide();
     $("#loading").show();
     $.ajax({
@@ -134,3 +135,10 @@ $(document).ready(function() {
     event.preventDefault();
   });
 });
+
+$(document).on('click', '.dialog-answer', function (event) {
+    const id = event.target.id
+    const content = $(event.target).text();
+    console.log('id: ', id, ' content: ', content);
+});
+

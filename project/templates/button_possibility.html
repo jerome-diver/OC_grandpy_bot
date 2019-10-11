@@ -1,11 +1,10 @@
 <p>Oui mais à quel propos ?<br>
     Quel est le contexte s'il te plaît ?</p>
-<form class="choices">
+<div class="choices">
     {% for possibility in possibilities %}
-        <button type="submit"
-                class="btn btn-secondary not-inline"
+        <button class="btn btn-secondary not-inline dialog-answer"
                 id="{{loop.index}}">
             {{possibility}}
             </button>
     {% endfor %}
-</form>
+</div>
