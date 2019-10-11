@@ -3,64 +3,59 @@
 <div class="row justify-content-center" id="title">
     <h1>Papy Bot</h1>
 </div>
-<div class="row" id="content-question-row">
-    <div class="col-md-2">
+<div class="row" id="body-content">
+    <div class="col-md-3">
         <img src="{{url_for('static', filename='img/HAL 9000.gif')}}"
              id="hal"
              class="pull-right img-responsive">
+        <div id="map"></div>
+        <div id="messages" style="diplay:none;">
+            {% include 'messages.html' %}</div>
+        <!-- alert messages template -->
     </div>
-    <div id="sentence" class="col-md-9">
-        <p>Posez une question à GrandPy bot, le grand père de HAL-9000
-            (première génération d'intelligence artificielle dans
-            "2011 L'Odysée de l'espace") et il vous dira ce qu'il sait.
-        </p>
+    <div id="chat-room" class="col-md-9">
+        <article id="chat">
+            <div class="bot-dialog">
+                Salut, je suis un vieux robot, je suis programmé pour
+                essayer de t'aider à trouver des réponses, poses ta question
+                bonhomme.
+            </div>
+        </article>
         <div id="question-content">
-            <form>
-                <div class="form-group">
-                    <label for="question">Question</label>
-                    <textarea required="true" rows="4"
-                              id="question"
-                              class="form-control"></textarea>
-                </div>
-                <div class="row justify-content-center">
-                    <button type="submit"
-                            class="btn btn-primary"
-                            >
-                        <div id="submit">
-                            <i class="fas fa-search"></i> Demandez à GrandPy
-                        </div>
-                        <div id="loading">
-                            <span class="spinner-border spinner-border-sm"
-                                  role="status"
-                                  aria-hidden="true"></span>
-                            Loading...
-                        </div>
-                    </button>
-                </div>
+            <form class="form-group">
+                <label class="inline" for="question">Question:</label>
+                <input type="text"
+                       required
+                       id="question"
+                       class="inline">
+                <button type="submit"
+                        class="btn btn-primary inline">
+                    <div id="submit">
+                        <i class="fas fa-search"></i>
+                        Demandez à GrandPy
+                    </div>
+                    <div id="loading">
+                        <span class="spinner-border spinner-border-sm"
+                              role="status"
+                              aria-hidden="true"></span>
+                        Loading...
+                    </div>
+                </button>
             </form>
         </div>
         <br>
-        <div class="row" id="messages"
-             style="diplay:none;">{% include 'messages.html' %}</div>
-        <!-- alert messages template -->
-    </div>
-    <div class="col-md-1">
-        <img src="{{ url_for('static', filename='img/OC.png')}}"
-             class="img-responsive"
-             id="openclassrooms":w
-        />
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-2" id="map"></div>
-    <div class="col-md-9">
-        <article id="chat"></article>
     </div>
 </div>
 <div class="row justify-content-md-center">
-    <div class="col-md-2"></div>
-    <div class="col-md-9" id="result"></div>
-    <div class="col-md-1"></div>
+    <div class="col-md-2">
+        <img src="{{ url_for('static', filename='img/OC.png')}}"
+             class="img-responsive"
+             id="openclassrooms"/>
+        Jerome Lanteri
+    </div>
+    <div class="col-md-10" id="result">
+        Projet VII - GrandPy bot - Openclassroom Parcours Python
+    </div>
 </div>
 <script src="{{ url_for('static', filename='js/question.js') }}"></script>
 <script src="{{ url_for('static', filename='js/moment-locales.min.js') }}"></script>

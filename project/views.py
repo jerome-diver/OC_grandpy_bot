@@ -33,7 +33,7 @@ def question():
     if question:
         ANALYZE.ask(question)
         found = ANALYZE.find_something()
-        print("found value", found, "\nanswer:", ANALYZE.answer)
+        print("| found value:", found, "\n| answer:", ANALYZE.answer)
         if found == 1:
             flash(u"j'ai trouvé quelque chose...", alert)
             return jsonify(dict(
@@ -74,19 +74,21 @@ def question():
             "messages": render_template("messages.html", alert=alert)})
 
 
-@app.route('/answer', methods=['POST'])
-def answer():
+@app.route('/bot_said', methods=['POST'])
+def bot_said():
     """Send an answer to AJAX call answer.js"""
 
+    answer = ""
     return jsonify(dict(
-        answer=render_template("answer.html",
+        answer=render_template("bot_said.html",
                                answer=ANALYZE.answer)))
 
 
-@app.route('/show_question', methods=['POST'])
-def show_question():
+@app.route('/user_said', methods=['POST'])
+def user_said():
     """Return question template to add"""
 
+    question = request.form['question']
     return jsonify(dict(
-        question=render_template('question.html',
-                                 question=ANALYZE.answer)))
+        question=render_template('user_said.html',
+                                 question=question)))

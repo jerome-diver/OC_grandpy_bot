@@ -75,11 +75,22 @@ $(document).ready(function() {
     $("#submit").hide();
     $("#loading").show();
     $.ajax({
-      data: { 'question': $('textarea#question').val() },
+      url: "/user_said",
+      data: { 'question': $('input#question').val() },
+      type: "POST",
+      success: function(response) {
+        $("#chat").append(response.question);
+      },
+      error: function(xhr) {
+        //Do Something to handle error
+      }
+    });
+    $.ajax({
+      data: { 'question': $('input#question').val() },
       type: 'POST',
       url: '/question' })
     .done(function(data) {
-      var old_question = $('textarea#question').val()
+      var old_question = $('input#question').val()
       
       $("#submit").show();
       $("#loading").hide();
@@ -90,9 +101,9 @@ $(document).ready(function() {
       if (data.error) {
         console.log("Error")
       } else {
-        if (data.found == 1)
         $.ajax({
-          url: "/answer",
+          url: "/bot_said",
+          data: data.answer,
           type: "POST",
           success: function(response) {
             $("#chat").append(response.answer);
@@ -101,17 +112,9 @@ $(document).ready(function() {
             //Do Something to handle error
           }
         });
+        if (data.found == 1) {
+        }
         if (data.found == 2) {
-          $.ajax({
-            url: "/show_question",
-            type: "POST",
-            success: function(response) {
-              $("#chat").append(response.question);
-            },
-            error: function(xhr) {
-              //Do Something to handle error
-            }
-          });
           $('#result').html(data.result);
           var location = null;
           if (data.latitude != '') {

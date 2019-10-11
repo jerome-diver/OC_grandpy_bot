@@ -7,23 +7,27 @@
 }
 
 #hal {
-padding-left: 10px;
+  padding-left: 10px;
   height: 200px;
   width: 100%;
 }
 
 #openclassrooms {
   padding-right: 10px;
-  height: 200px;
-  width: 100%;
+  height: 40px;
+  width: 40px;
 }
 
 #sentence {
   padding: 10px;
 }
 
-#content-question-row {
-  padding : 10px;
+#body-content {
+  padding-right: 1%;
+}
+
+.inline {
+  display: inline;
 }
 
 #map {
@@ -31,19 +35,27 @@ padding-left: 10px;
     width:  50%;
 }
 
+#chat-room {
+  padding: 10px;
+  border: 2px solid #666;
+  border-radius: 5px;
+  overflow-y: scroll;
+}
+
 #loading {
   display: none;
 }
 
-.dialog {
+.user-dialog {
   border: 2px solid #dedede;
   background-color: #f1f1f1;
   border-radius: 5px;
-  padding: 10px;
-  margin: 10px 0;
+  margin-left: 20px;
+  padding: 5px;
 }
 
 /* Darker chat container */
-.question {
+.bot-dialog {
   background-color: #ddd;
+  padding: 5px;
 }
