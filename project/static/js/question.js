@@ -103,7 +103,7 @@ $(document).ready(function() {
       } else {
         $.ajax({
           url: "/bot_said",
-          data: data.answer,
+          data: { 'answer': data.answer },
           type: "POST",
           success: function(response) {
             $("#chat").append(response.answer);

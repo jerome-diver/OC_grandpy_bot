@@ -78,10 +78,10 @@ def question():
 def bot_said():
     """Send an answer to AJAX call answer.js"""
 
-    answer = ""
+    answer = Markup(request.form["answer"])
     return jsonify(dict(
         answer=render_template("bot_said.html",
-                               answer=ANALYZE.answer)))
+                               answer=answer)))
 
 
 @app.route('/user_said', methods=['POST'])
