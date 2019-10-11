@@ -1,6 +1,7 @@
 """Parse string to remove stop words"""
 
 import re
+from flask import render_template
 from treetaggerwrapper import TreeTagger as tt
 from mediawiki import MediaWiki
 from jinja2 import Markup, escape
@@ -89,10 +90,8 @@ class Properties:
                 f"<p>{self._content}</p>"
                 f"<p>{escape(self._last)}</p>")
         elif len(self._possibilities) > 1:
-            text = "<p>Oui, mais à quel propos ?<br>" \
-                   "Quel est le contexte s'il te plaît ?</p>"
-            for index, possibility in enumerate(self._possibilities):
-                text += f"<button id=choice_{index}>{possibility}</button><br>"
+            text = render_template("button_possibility.html",
+                                   possibilities=self._possibilities)
             return Markup(text)
         else:
             return f'<p>Je ne sais rien à ce propos, je suis désolé.</p>'

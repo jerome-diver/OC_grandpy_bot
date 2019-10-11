@@ -30,6 +30,11 @@
   display: inline;
 }
 
+.not-inline {
+  display: block;
+  margin-top: 5px;
+}
+
 #map {
     height: 200px;
     width:  50%;
