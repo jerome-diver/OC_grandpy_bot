@@ -20,8 +20,6 @@ class Removed(Enum):
 
 class Properties:
 
-    WIKI = MediaWiki("https://fr.wikipedia.org/w/api.php", lang='fr')
-
     def __init__(self):
 
         self._question = None
@@ -34,7 +32,14 @@ class Properties:
         self._introduction = None
         self._content = ""
         self._last = None
-        self._possibilities = set()
+        self._get_last = False
+        self._index = None
+        self._possibilities = list()
+        self._queries = dict(
+            N=QueryWiki(Removed.NOTHING),
+            SW=QueryWiki(Removed.STOP_WORDS),
+            SW_V=QueryWiki(Removed.STOP_WORDS_VERBS))
+        self._query = None
 
     @property
     def question(self):
@@ -84,7 +89,7 @@ class Properties:
     def answer(self):
         """Property for self._answer"""
 
-        if len(self._possibilities) == 1:
+        if self._get_last or len(self._possibilities) == 1:
             return Markup(
                 f"<p>{escape(self._introduction)}</p>"
                 f"<p>{self._content}</p>"
@@ -112,10 +117,7 @@ class Properties:
     def resume(self):
         """Property for self._result"""
 
-        if self._title:
-            text = self.WIKI.summary(title=self._title, sentences=2)
-            return f"<h2>{self._title}</h2><p>{text}</p>"
-        return "Nothing found"
+        return self._query.resume
 
 
 class Tools():
@@ -165,7 +167,7 @@ class Tools():
                 if self.VERB.match(tag[1])]
 
 
-class QueryData(Tools):
+class QueryWiki(Tools):
     """Create query to get result oriented searching form factory"""
 
     WIKI = MediaWiki("https://fr.wikipedia.org/w/api.php", lang='fr')
@@ -175,41 +177,45 @@ class QueryData(Tools):
         super().__init__()
         self._form = form
         self._query_analyzed = None
-        self._wiki = None
+        self._possibilities = list()
 
-    def define(self, query: str):
+    def define(self, question: str):
         """Define query form and process other owned definition linked"""
 
-        self._input = query
+        self._input = question
         if self._form == Removed.STOP_WORDS:
             self._query_analyzed = self.remove_stop_words()
         elif self._form == Removed.STOP_WORDS_VERBS:
             self._input = self.remove_stop_words()
             self._query_analyzed = self.remove_verbs()
         else:
-            self._query_analyzed = query
+            self._query_analyzed = question
         print(f"ANALYZE QUERY FOR {self._form} IS:", self._query_analyzed)
-        self._wiki = self.WIKI.page(self._query_analyzed)
 
     @property
-    def wiki(self):
+    def page(self):
         """wiki property"""
 
-        return self._wiki
+        return self.WIKI.page(self._query_analyzed)
 
     @property
     def resume(self):
         """Resume property"""
 
-        return self._wiki.summary()
+        text = self.WIKI.summary(title=self._query_analyzed,
+                                 sentences=2)
+        return f"<h2>{self._input}</h2><p>{text}</p>"
 
     @property
     def searching(self):
         """searching property from MEDIAWIKI"""
 
-        return self.WIKI.search(self._query_analyzed,
-                                suggestion=False,
-                                results=5)
+        self._possibilities = self.WIKI.search(self._query_analyzed,
+                                               suggestion=False,
+                                               results=5)
+        if self._possibilities:
+            return True
+        return False
 
     @property
     def suggested_title(self):
@@ -227,19 +233,27 @@ class QueryData(Tools):
     def coordinates(self):
         """coordinates property from MEDIAWIKI"""
 
-        return self._wiki.coordinates
+        if hasattr(self.page, "coordinates"):
+            return self.page.coordinates
+        return None
 
     @property
     def references(self):
         """references property from MEDIAWIKI"""
 
-        return self._wiki.references
+        return self.page.references
 
     @property
-    def page(self):
+    def html(self):
         """html page property from MEDIAWIKI"""
 
-        return self._wiki.html
+        return self.page.html
+
+    @property
+    def possibilities(self):
+        """Property for all possibilities of this queryWiki"""
+
+        return self._possibilities
 
 
 class Analyzer(Properties):
@@ -249,48 +263,56 @@ class Analyzer(Properties):
     def __init__(self):
 
         super().__init__()
-        self._queries = dict(
-            ORIGINAL=QueryData(Removed.NOTHING),
-            NO_SW=QueryData(Removed.STOP_WORDS),
-            NO_SW_VERB=QueryData(Removed.STOP_WORDS_VERBS))
+
+    def last_answer(self, index=0):
+        """Wash previous possibilities content and define one answer"""
+
+        self._get_last = True
+        self._index = index - 1 if index != 0 else 0
 
     def ask(self, question: str):
         """Ask question"""
 
-        self._question = question
-        for query in self._queries.values():
-            query.define(question)
-            found = query.searching
-            print("FOUND:", found)
-            if found:
-                self._possibilities |= set(found)
+        if self._get_last:
+            self._queries["N"].define(self._possibilities[self._index])
+        else:
+            for key, query in self._queries.items():
+                query.define(question)
+                if query.searching:
+                    for possible in query.possibilities:
+                        if possible not in self._possibilities:
+                            self._possibilities.append(possible)
 
     def find_something(self) -> int:
-        if len(self._possibilities) > 1:
+        self._last = "J'espère que ça te convient bonhomme. As-tu une autre " \
+                     "question ?"
+        if self._get_last:
+            self._query = self._queries['N']
+            self.collect_data()
+            self.form_answer_elements()
+            return 1
+        elif len(self._possibilities) == 1:
+            self._query = self._queries['SW_V']
+            self._query.define(self._possibilities.pop())
+            self.collect_data()
+            self.form_answer_elements()
+            return 1
+        elif len(self._possibilities) > 1:
             self._introduction = "Cela me fait penser à plusieurs choses, " \
                                 "de quoi est-il question plus précisément ?"
             for index, possible in enumerate(self._possibilities):
-                self._content += f"{index + 1}) {possible}\n"
+                self._content += f"{index}) {possible}\n"
             self._last = "Fais un choix dans cette liste mon grand..."
             return 2
-        elif len(self._possibilities) == 1:
-            self.collect_data(self._possibilities[0])
-            self.form_answer_elements()
-            return 1
         return 0
 
-    def send_choice(self, choice: int):
-        """Get answer corresponding to the choice"""
-
-        pass
-
-    def collect_data(self, query):
+    def collect_data(self):
         """Provide analysis to get relevant MediaWiki data from query"""
 
-        self.catch_coordinates(query)
+        self.catch_coordinates(self._query)
         if not self.has_coordinates():
-            self.catch_address(query)
-        self._result = query.page
+            self.catch_address(self._query)
+        self._result = self._query.page
 
     def form_answer_elements(self):
         """Define answer elements for answer sentence"""

@@ -1,3 +1,54 @@
+function ask(content, type, index) {
+  $.ajax({
+    data: { 'question': content, 'type': type, 'index': index },
+    type: 'POST',
+    url: '/question' })
+  .done(function(data) {
+    var old_question = content;
+    $("input#question").val('');
+    $("#submit").show();
+    $("#loading").hide();
+    $('#messages').html(data.messages);
+    $("#messages").show();
+    $("#messages").fadeIn(500);
+    $('#messages').fadeOut(4000);
+    if (data.error) {
+      console.log("Error")
+    } else {
+      $.ajax({
+        url: "/bot_said",
+        data: { 'answer': data.answer },
+        type: "POST",
+        success: function(response) {
+          $("#chat").append(response.answer);
+        },
+        error: function(xhr) {
+          //Do Something to handle error
+        }
+      });
+      if (data.found == 1) {
+        $('#result').html(data.result);
+        var location = null;
+        if (data.latitude != '') {
+          location = getLocationFromCoordinates(data.latitude,
+                                                data.longitude);
+        }
+        else {
+          location = getLocationFromAddress(data.address);
+        }
+        var map = initMap(location);
+        mark(map, location, data.title, data.resume)
+      }
+      if (data.found == 2) {
+        $('#result').html(data.result);
+      } else {
+        console.log("Nothing found");
+      }
+    }
+  });
+
+}
+
 $(document).ready(function() {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   console.log(tz);
@@ -77,7 +128,7 @@ $(document).ready(function() {
     $("#loading").show();
     $.ajax({
       url: "/user_said",
-      data: { 'question': $('input#question').val() },
+      data: { 'question': $('input#question').val()},
       type: "POST",
       success: function(response) {
         $("#chat").append(response.question);
@@ -86,52 +137,7 @@ $(document).ready(function() {
         //Do Something to handle error
       }
     });
-    $.ajax({
-      data: { 'question': $('input#question').val() },
-      type: 'POST',
-      url: '/question' })
-    .done(function(data) {
-      var old_question = $('input#question').val()
-      $("input#question").val('');
-      $("#submit").show();
-      $("#loading").hide();
-      $('#messages').html(data.messages);
-      $("#messages").show();
-      $("#messages").fadeIn(500);
-      $('#messages').fadeOut(4000);
-      if (data.error) {
-        console.log("Error")
-      } else {
-        $.ajax({
-          url: "/bot_said",
-          data: { 'answer': data.answer },
-          type: "POST",
-          success: function(response) {
-            $("#chat").append(response.answer);
-          },
-          error: function(xhr) {
-            //Do Something to handle error
-          }
-        });
-        if (data.found == 1) {
-        }
-        if (data.found == 2) {
-          $('#result').html(data.result);
-          var location = null;
-          if (data.latitude != '') {
-            location = getLocationFromCoordinates(data.latitude,
-                                                  data.longitude);
-          }
-          else {
-            location = getLocationFromAddress(data.address);
-          }
-          var map = initMap(location);
-          mark(map, location, data.title, data.resume)
-        } else {
-
-        }
-      }
-    });
+    ask($('input#question').val(), "question", 0 );
     event.preventDefault();
   });
 });
@@ -140,5 +146,6 @@ $(document).on('click', '.dialog-answer', function (event) {
     const id = event.target.id
     const content = $(event.target).text();
     console.log('id: ', id, ' content: ', content);
+    ask(content, "answer", id);
 });
 

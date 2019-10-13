@@ -29,49 +29,42 @@ def question():
     """Send a question to AJAX call question.js"""
 
     question = request.form['question']
+    type = request.form['type']
+    index = int(request.form['index'])
     alert = "alert-success"
+    data = dict()
+    if type == "answer":
+        ANALYZE.last_answer(index)
     if question:
         ANALYZE.ask(question)
         found = ANALYZE.find_something()
         print("| found value:", found, "\n| answer:", ANALYZE.answer)
+        if found > 0:
+            data = dict(
+                question=question,
+                title=ANALYZE.title,
+                answer=ANALYZE.answer)
         if found == 1:
             flash(u"j'ai trouvé quelque chose...", alert)
-            return jsonify(dict(
-                found=1,
-                question=question,
-                title=ANALYZE.title,
-                answer=ANALYZE.answer,
+            data.update( dict(
                 resume=ANALYZE.resume,
                 latitude=ANALYZE.latitude,
                 longitude=ANALYZE.longitude,
-                address=ANALYZE.address,
-                messages=render_template('messages.html', alert=alert)))
+                address=ANALYZE.address))
         elif found == 2:
             flash(u'Il y a plusieurs possibilités...', alert)
-            return jsonify(dict(
-                found=2,
-                question=question,
-                title=ANALYZE.title,
-                answer=ANALYZE.answer,
-                resume=ANALYZE.resume,
-                latitude=ANALYZE.latitude,
-                longitude=ANALYZE.longitude,
-                address=ANALYZE.address,
-                messages=render_template('messages.html', alert=alert)))
         else:
             alert = "alert-warning"
             flash(u'Hélas, ma mémoire me fait défaut, je suis trop vieux !',
                   alert)
-            return jsonify(dict(
-                found=0,
-                answer=False,
-                messages=render_template('messages.html', alert=alert)))
+            data = dict(answer=False)
+        data.update(dict(found=found))
     else:
         alert="alert-danger"
         flash(u'Pas de question posée', alert)
-        return jsonify({
-            "ERROR": "missing question",
-            "messages": render_template("messages.html", alert=alert)})
+        data = dict(ERROR="missing question")
+    data.update(dict(messages=render_template("messages.html", alert=alert)))
+    return jsonify(data)
 
 
 @app.route('/bot_said', methods=['POST'])
