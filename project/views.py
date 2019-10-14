@@ -53,6 +53,9 @@ def question():
                 address=ANALYZE.address))
         elif found == 2:
             flash(u'Il y a plusieurs possibilités...', alert)
+        elif found == 3:
+            alert = "alert-warning"
+            flash(u"l m'est impossible de répondre.", alert)
         else:
             alert = "alert-warning"
             flash(u'Hélas, ma mémoire me fait défaut, je suis trop vieux !',
@@ -63,7 +66,8 @@ def question():
         alert="alert-danger"
         flash(u'Pas de question posée', alert)
         data = dict(ERROR="missing question")
-    data.update(dict(messages=render_template("messages.html", alert=alert)))
+    data.update(dict(messages=render_template("messages.html",
+                                              alert=alert)))
     return jsonify(data)
 
 
