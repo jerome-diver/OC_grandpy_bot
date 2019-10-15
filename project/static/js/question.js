@@ -28,7 +28,7 @@ const endLoading = () => {
 }
 
 const flash = (content) => {
-  $('#messages').html(data.messages);
+  $('#messages').html(content);
   $("#messages").show();
   $("#messages").fadeIn(500);
   $('#messages').fadeOut(4000);
