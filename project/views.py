@@ -35,6 +35,8 @@ def question():
     data = dict()
     if type == "answer":
         ANALYZE.last_answer(index)
+    else:
+        ANALYZE.clear()
     if question:
         ANALYZE.ask(question)
         found = ANALYZE.find_something()

@@ -265,6 +265,19 @@ class Analyzer(Properties):
 
         super().__init__()
 
+    def clear(self):
+        """Clear all class variables"""
+
+        self._get_last = False
+        self._index = 0
+        self._can_not_answer = False
+        self._possibilities = list()
+        self._queries = dict(
+            N=QueryWiki(Removed.NOTHING),
+            SW=QueryWiki(Removed.STOP_WORDS),
+            SW_V=QueryWiki(Removed.STOP_WORDS_VERBS))
+        self._query = None
+
     def last_answer(self, index=0):
         """Wash previous possibilities content and define one answer"""
 
