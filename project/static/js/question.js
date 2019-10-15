@@ -2,6 +2,21 @@ const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const botAjaxError = "bot can't said anything... AJAX ERROR";
 const userAjaxError = "user can't said anything... AJAX ERROR";
 
+const getLocationFromAddress = (address) => {
+  const geocoder = new google.maps.Geocoder();
+  geocoder.geocode({'address': address}, (results, status) => {
+    if (status === 'OK') { return results[0].geometry.location }
+    else {
+      alert('Geocode was not successful for the following reason: ' + status);
+      return null;
+    }
+  });
+}
+
+const getLocationFromCoordinates = (latitude, longitude) => {
+  return new google.maps.LatLng(latitude, longitude);
+}
+
 const loading = () => {
   $("#submit").hide();
   $("#loading").show();
@@ -77,8 +92,6 @@ const userSaid = (content) => {
 }
 
 $(document).ready( () => {
-  console.log(tz);
-  console.log(moment().format('LTS'))
   const initMap = (location) => {
     var mapCanvas = document.getElementById('map');
     var mapOptions = {
@@ -89,17 +102,6 @@ $(document).ready( () => {
     }
     var map = new google.maps.Map(mapCanvas, mapOptions);
     return map;
-  }
-
-  const getLocationFromAddress = (address) => {
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({'address': address}, (results, status) => {
-      if (status === 'OK') { return results[0].geometry.location }
-      else {
-        alert('Geocode was not successful for the following reason: ' + status);
-        return null;
-      }
-    });
   }
 
   //function getBrowserLocation() {
@@ -126,10 +128,6 @@ $(document).ready( () => {
   //.');
   //  infoWindow.open(map);
   //}
-
-  const getLocationFromCoordinates = (latitude, longitude) => {
-    return new google.maps.LatLng(latitude, longitude);
-  }
 
   const mark = (map, location, title, content) => {
     var infoWindow = new google.maps.InfoWindow({ content: content });
