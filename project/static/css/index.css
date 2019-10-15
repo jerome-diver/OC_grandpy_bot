@@ -1,5 +1,6 @@
 
 @import url(https://fonts.googleapis.com/css?family=Abril+Fatface|Anton|Archivo+Black|Coiny|Concert+One|Fredoka+One|Josefin+Sans|Quattrocento+Sans|Raleway|Ubuntu|Work+Sans|ZCOOL+QingKe+HuangYou&display=swap);
+
 #title h1 {
   font-family: "Coiny", sans-serif;
   font-size: 40px;
@@ -51,6 +52,7 @@
   display: none;
 }
 
+/* Chat dialog boxes */
 .user-dialog {
   border: 2px solid #dedede;
   background-color: #f1f1f1;
@@ -63,4 +65,14 @@
 .bot-dialog {
   background-color: #ddd;
   padding: 5px;
+  margin-top: 5px;
+  border-radius: 5px;
 }
+
+/* Time and location */
+.local-time-zone {
+  float: right;
+  margin-left: 80%
+}
+
+.c { clear: both; }

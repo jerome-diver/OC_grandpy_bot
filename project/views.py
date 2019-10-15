@@ -76,9 +76,13 @@ def bot_said():
     """Send an answer to AJAX call answer.js"""
 
     answer = Markup(request.form["answer"])
+    time = request.form['time']
+    location = request.form['location']
     return jsonify(dict(
         answer=render_template("bot_said.html",
-                               answer=answer)))
+                               answer=answer,
+                               time=time,
+                               location=location)))
 
 
 @app.route('/user_said', methods=['POST'])
@@ -86,6 +90,10 @@ def user_said():
     """Return question template to add"""
 
     question = request.form['question']
+    time = request.form['time']
+    location = request.form['location']
     return jsonify(dict(
         question=render_template('user_said.html',
-                                 question=question)))
+                                 question=question,
+                                 time=time,
+                                 location=location)))

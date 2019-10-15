@@ -365,9 +365,18 @@ class Analyzer(Properties):
     def detect_emotion_subject(self) -> bool:
         """Find if question target on emotion subject"""
 
+        """
+        Emotive's subjects can contain verb: [aimer, préférer, ]
+        and has second person infinitive or plurial subject target  
+        """
         pass
 
     def detect_subjective_question(self) -> bool:
         """Detect if question is subjective"""
 
+        """
+        Subjective question can contain verb: [penser, imaginer, 
+        sentir, ressentir, croire, douter, supposer, sembler, prétendre, 
+        souhaiter, espérer
+        """
         pass

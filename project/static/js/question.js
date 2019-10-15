@@ -1,31 +1,37 @@
-function ask(content, type, index) {
+const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const botAjaxError = "bot can't said anything... AJAX ERROR";
+const userAjaxError = "user can't said anything... AJAX ERROR";
+
+const loading = () => {
+  $("#submit").hide();
+  $("#loading").show();
+}
+
+const endLoading = () => {
+  $("#submit").show();
+  $("#loading").hide();
+}
+
+const flash = (content) => {
+  $('#messages').html(data.messages);
+  $("#messages").show();
+  $("#messages").fadeIn(500);
+  $('#messages').fadeOut(4000);
+}
+
+const ask = (content, type, index) => {
   $.ajax({
     data: { 'question': content, 'type': type, 'index': index },
     type: 'POST',
     url: '/question' })
-  .done(function(data) {
-    var old_question = content;
+  .done( (data) => {
     $("input#question").val('');
-    $("#submit").show();
-    $("#loading").hide();
-    $('#messages').html(data.messages);
-    $("#messages").show();
-    $("#messages").fadeIn(500);
-    $('#messages').fadeOut(4000);
+    endLoading();
+    flash(content);
     if (data.error) {
       console.log("Error")
     } else {
-      $.ajax({
-        url: "/bot_said",
-        data: { 'answer': data.answer },
-        type: "POST",
-        success: function(response) {
-          $("#chat").append(response.answer);
-        },
-        error: function(xhr) {
-          //Do Something to handle error
-        }
-      });
+      botSaid(data.answer);
       if (data.found == 1) {
         $('#result').html(data.result);
         var location = null;
@@ -41,20 +47,39 @@ function ask(content, type, index) {
       }
       if (data.found == 2) {
         $('#result').html(data.result);
-      } else {
-        console.log("Nothing found");
-      }
+      } else { console.log("Nothing found") }
     }
   });
-
 }
 
-$(document).ready(function() {
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const botSaid = (content) => {
+  $.ajax({
+    url: "/bot_said",
+    data: { 'answer': content,
+            'time': moment().format('LTS'),
+            'location': tz},
+    type: "POST",
+    success: (response) => { $("#chat").append(response.answer) },
+    error: (xhr) => { console.log( botAjaxError ) }
+  });
+}
+
+const userSaid = (content) => {
+  $.ajax({
+    url: "/user_said",
+    data: { 'question': content,
+            'time': moment().format('LTS'),
+            'location': tz },
+    type: "POST",
+    success: (response) => { $("#chat").append(response.question) },
+    error: (xhr) => { console.log( userAjaxError) }
+  });
+}
+
+$(document).ready( () => {
   console.log(tz);
   console.log(moment().format('LTS'))
-  function initMap(location) {
-
+  const initMap = (location) => {
     var mapCanvas = document.getElementById('map');
     var mapOptions = {
       center: location,
@@ -66,12 +91,11 @@ $(document).ready(function() {
     return map;
   }
 
-  function getLocationFromAddress(address) {
+  const getLocationFromAddress = (address) => {
     var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({'address': address}, function(results, status) {
-      if (status === 'OK') {
-        return results[0].geometry.location;
-      } else {
+    geocoder.geocode({'address': address}, (results, status) => {
+      if (status === 'OK') { return results[0].geometry.location }
+      else {
         alert('Geocode was not successful for the following reason: ' + status);
         return null;
       }
@@ -103,49 +127,36 @@ $(document).ready(function() {
   //  infoWindow.open(map);
   //}
 
-  function getLocationFromCoordinates(latitude, longitude) {
+  const getLocationFromCoordinates = (latitude, longitude) => {
     return new google.maps.LatLng(latitude, longitude);
   }
 
-  function mark(map, location, title, content) {
-  var infoWindow = new google.maps.InfoWindow({
-          content: content });
-  var marker = new google.maps.Marker({
-              map: map,
-              position: location,
-              animation: google.maps.Animation.BOUNCE,
-              label: title
-            });
-  marker.addListener('click', function() {
-          infoWindow.open(map, marker); });
+  const mark = (map, location, title, content) => {
+    var infoWindow = new google.maps.InfoWindow({ content: content });
+    var marker = new google.maps.Marker({
+                map: map,
+                position: location,
+                animation: google.maps.Animation.BOUNCE,
+                label: title
+              });
+    marker.addListener('click', () => { infoWindow.open(map, marker) });
   }
 
   google.maps.event.addDomListener(window, 'load', initMap);
 
-  $("#dialog-question").on('submit', function(event) {
-    console.log("OK");
-    $("#submit").hide();
-    $("#loading").show();
-    $.ajax({
-      url: "/user_said",
-      data: { 'question': $('input#question').val()},
-      type: "POST",
-      success: function(response) {
-        $("#chat").append(response.question);
-      },
-      error: function(xhr) {
-        //Do Something to handle error
-      }
-    });
+  $("#dialog-question").on('submit', (event) => {
+    loading();
+    userSaid($('input#question').val())
     ask($('input#question').val(), "question", 0 );
     event.preventDefault();
   });
 });
 
-$(document).on('click', '.dialog-answer', function (event) {
-    const id = event.target.id
-    const content = $(event.target).text();
-    console.log('id: ', id, ' content: ', content);
-    ask(content, "answer", id);
+$(document).on('click', '.dialog-answer', (event) => {
+  const id = event.target.id
+  const content = $(event.target).text();
+  console.log('id: ', id, ' content: ', content.trim());
+  loading();
+  userSaid(content.trim());
+  ask(content, "answer", id);
 });
-
