@@ -24,8 +24,8 @@ def index():
     return render_template('index.html', GOOGLE_KEY=GOOGLE_KEY)
 
 
-@app.route('/question', methods=['POST'])
-def question():
+@app.route('/submit', methods=['POST'])
+def submit():
     """Send a question to AJAX call question.js"""
 
     question = request.form['question']
