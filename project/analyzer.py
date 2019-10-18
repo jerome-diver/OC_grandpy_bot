@@ -35,7 +35,6 @@ class Properties:
         self._get_last = False
         self._index = None
         self._possibilities = list()
-        self._can_not_answer = False
         self._queries = dict(
             N=QueryWiki(Removed.NOTHING),
             SW=QueryWiki(Removed.STOP_WORDS),
@@ -204,7 +203,7 @@ class QueryWiki(Tools):
         """Resume property"""
 
         text = self.WIKI.summary(title=self._query_analyzed,
-                                 sentences=2)
+                                 sentences=10)
         return f"<h2>{self._input}</h2><p>{text}</p>"
 
     @property
@@ -270,7 +269,6 @@ class Analyzer(Properties):
 
         self._get_last = False
         self._index = 0
-        self._can_not_answer = False
         self._possibilities = list()
         self._queries = dict(
             N=QueryWiki(Removed.NOTHING),
@@ -289,8 +287,6 @@ class Analyzer(Properties):
 
         if self._get_last:
             self._queries["N"].define(self._possibilities[self._index])
-        elif not self.can_search():
-            pass
         else:
             for key, query in self._queries.items():
                 query.define(question)
@@ -307,9 +303,6 @@ class Analyzer(Properties):
             self.collect_data()
             self.form_answer_elements()
             return 1
-        elif self._can_not_answer:
-            self.form_answer_elements()
-            return 3
         elif len(self._possibilities) == 1:
             self._query = self._queries['SW_V']
             self._query.define(self._possibilities.pop())
@@ -367,29 +360,3 @@ class Analyzer(Properties):
         """Catch an address from wiki text result"""
 
         self._address = ""
-
-    def can_search(self):
-        """Detect if can search"""
-
-        self._can_not_answer = self.detect_subjective_question() or \
-                               self.detect_emotion_subject()
-        return not self._can_not_answer
-
-    def detect_emotion_subject(self) -> bool:
-        """Find if question target on emotion subject"""
-
-        """
-        Emotive's subjects can contain verb: [aimer, préférer, ]
-        and has second person infinitive or plurial subject target  
-        """
-        pass
-
-    def detect_subjective_question(self) -> bool:
-        """Detect if question is subjective"""
-
-        """
-        Subjective question can contain verb: [penser, imaginer, 
-        sentir, ressentir, croire, douter, supposer, sembler, prétendre, 
-        souhaiter, espérer
-        """
-        pass

@@ -55,9 +55,6 @@ def submit():
                 address=ANALYZE.address))
         elif found == 2:
             flash(u'Il y a plusieurs possibilités...', alert)
-        elif found == 3:
-            alert = "alert-warning"
-            flash(u"l m'est impossible de répondre.", alert)
         else:
             alert = "alert-warning"
             flash(u'Hélas, ma mémoire me fait défaut, je suis trop vieux !',
