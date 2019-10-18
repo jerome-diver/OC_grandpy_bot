@@ -2,18 +2,19 @@
 {% block body %}
 <div class="row justify-content-center" id="title">
     <h1>Papy Bot</h1>
-</div>
-<div class="row" id="body-content">
-    <div class="col-md-3">
+    <div id=""logo>
         <img src="{{url_for('static', filename='img/HAL 9000.gif')}}"
              id="hal"
              class="pull-right img-responsive">
-        <div id="map"></div>
-        <div id="messages" style="diplay:none;">
-            {% include 'messages.html' %}</div>
-        <!-- alert messages template -->
+        <p>Tu sais où tu veux aller, le vieux papy-bot sera peut-être où ça se
+            trouve et ce que tu pourrais y trouver...</p>
     </div>
-    <div id="chat-room" class="col-md-9">
+    <div id="messages" style="diplay:none;">
+        {% include 'messages.html' %}</div>
+    <!-- alert messages template -->
+</div>
+<div class="row" id="body-content">
+    <div id="chat-room" class="col-md-12">
         <article id="chat">
             <div class="bot-dialog">
                 Salut, je suis un vieux robot, je suis programmé pour

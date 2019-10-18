@@ -16,11 +16,24 @@ from project.analyzer import Analyzer
 
 ANALYZE = Analyzer()
 
+
+@app.route('/map_coordinates', methods=['GET'])
+def map_coordinates():
+    """Get  map coordinates from AJAX bot request"""
+
+    return jsonify(dict(
+        map_id = ANALYZE.map_id,
+        latitude = ANALYZE.latitude,
+        longitude = ANALYZE.longitude,
+        address = ANALYZE.address))
+
+
 @app.route('/')
 @app.route('/index/')
 def index():
     """At start time, should call an index.html page"""
 
+    ANALYZE = Analyzer()
     return render_template('index.html', GOOGLE_KEY=GOOGLE_KEY)
 
 
@@ -50,6 +63,7 @@ def submit():
             flash(u"j'ai trouvé quelque chose...", alert)
             data.update( dict(
                 resume=ANALYZE.resume,
+                map_id=ANALYZE.map_id,
                 latitude=ANALYZE.latitude,
                 longitude=ANALYZE.longitude,
                 address=ANALYZE.address))
@@ -77,11 +91,13 @@ def bot_said():
     answer = Markup(request.form["answer"])
     time = request.form['time']
     location = request.form['location']
+    map_id = f"map_{request.form['mapid']}"
     return jsonify(dict(
         answer=render_template("bot_said.html",
                                answer=answer,
                                time=time,
-                               location=location)))
+                               location=location,
+                               map_id=map_id)))
 
 
 @app.route('/user_said', methods=['POST'])

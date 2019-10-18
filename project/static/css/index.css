@@ -36,7 +36,7 @@
   margin-top: 5px;
 }
 
-#map {
+.google-map {
     height: 200px;
     width:  50%;
 }

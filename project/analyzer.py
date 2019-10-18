@@ -35,6 +35,7 @@ class Properties:
         self._get_last = False
         self._index = None
         self._possibilities = list()
+        self._map_id = 0
         self._queries = dict(
             N=QueryWiki(Removed.NOTHING),
             SW=QueryWiki(Removed.STOP_WORDS),
@@ -118,6 +119,12 @@ class Properties:
         """Property for self._result"""
 
         return self._query.resume
+
+    @property
+    def map_id(self):
+        """Property for map id"""
+
+        return self._map_id
 
 
 class Tools():
@@ -275,6 +282,7 @@ class Analyzer(Properties):
             SW=QueryWiki(Removed.STOP_WORDS),
             SW_V=QueryWiki(Removed.STOP_WORDS_VERBS))
         self._query = None
+        self._map_id += 1
 
     def last_answer(self, index=0):
         """Wash previous possibilities content and define one answer"""

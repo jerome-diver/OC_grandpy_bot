@@ -4,7 +4,6 @@ class Dialog {
   constructor(user, bot) {
     this.user = user;
     this.bot = bot;
-    this.map = new GoogleMap();
   }
   static loading() {
     $("#submit").hide();
@@ -36,25 +35,14 @@ class Dialog {
       if (data.error) {
         console.log("Error")
       } else {
-        this.bot.said(data.answer);
         if (data.found == 1) {
+          this.bot.said(data.answer, data.map_id,
+                        data.title, data.resume);
           $('#result').html(data.result);
-          var location = null;
-          if (data.latitude != '') {
-            console.log("search from latitude/longitude returned");
-            location = this.map.getLocationFromCoordinates(data.latitude,
-                                                           data.longitude);
-          }
-          else if (data.address != '') {
-            console.log("Search from address returned");
-            location = this.map.getLocationFromAddress(data.address);
-          }
-          console.log("Location found is ", location);
-          var map = this.map.initMap(location);
-          this.map.mark(map, location, data.title, data.resume)
         }
         else if (data.found == 2) {
           $('#result').html(data.result);
+          this.bot.said(data.answer, null, null, null)
         }
         else { console.log("Nothing found") }
       }
@@ -65,16 +53,43 @@ class Dialog {
 class Bot {
   constructor() {
     this.ajaxError = "bot can't said anything... AJAX ERROR";
+    this.ajaxCoordinatesError = "There is no AJAX coordinate for a map.";
   }
 
-  said(content) {
+  said(content, map_id, title, resume) {
     $.ajax({
       url: "/bot_said",
       data: { 'answer': content,
               'time': moment().format('LTS'),
-              'location': tz},
+              'location': tz,
+              'mapid': map_id},
       type: "POST",
-      success: (response) => { $("#chat").append(response.answer) },
+      success: (response) => {
+        $("#chat").append(response.answer)
+        if (map_id != null) {
+          $.ajax({
+            url: "/map_coordinates",
+            type: "GET",
+            success: (data) => {
+              var location = null;
+              if (data.latitude != '') {
+                console.log("search from latitude/longitude returned");
+                location = GoogleMap.locationFromCoordinates(data.latitude,
+                                                             data.longitude);
+              }
+              else if (data.address != '') {
+                console.log("Search from address returned");
+                location = GoogleMap.locationFromAddress(data.address);
+              }
+              console.log("Location found is ", location);
+              const map_id = "map_" + data.map_id;
+              var map = new GoogleMap(location, map_id);
+              map.mark(location, title, resume);
+            },
+            error: (xhr) => { console.log( this.ajaxCoordinatesError ) }
+          });
+        }
+      },
       error: (xhr) => { console.log( this.ajaxError ) }
     });
   }
@@ -99,46 +114,49 @@ class User {
 }
 
 class GoogleMap {
-  constructor() {
-    this.initMap = (location) => {
-      var mapCanvas = document.getElementById('map');
-      var mapOptions = {
-        center: location,
-        zoom: 16,
-        panControl: false,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      }
-      var map = new google.maps.Map(mapCanvas, mapOptions);
-      return map;
-    }
-    google.maps.event.addDomListener(window, 'load', this.initMap);
+  constructor(location, id) {
+    console.log("New GoogleMap with id =", id);
+    this.map = this.initMap(location, id);
+    google.maps.event.addDomListener(window, 'load', this.map);
   }
 
-  getLocationFromAddress(address) {
+  initMap(location, id) {
+    var mapCanvas = document.getElementById(id);
+    var mapOptions = {
+      center: location,
+      zoom: 16,
+      panControl: false,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    return new google.maps.Map(mapCanvas, mapOptions);
+  }
+
+  static locationFromAddress(address) {
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({'address': address}, (results, status) => {
       if (status === 'OK') { return results[0].geometry.location }
       else {
-        alert('Geocode was not successful for the following reason: ' + status);
+        alert('Geocode was not successful for the following reason: ${status}');
         return null;
       }
     });
   }
 
-  getLocationFromCoordinates(latitude, longitude) {
+  static locationFromCoordinates(latitude, longitude) {
     return new google.maps.LatLng(latitude, longitude);
   }
 
 
-  mark(map, location, title, content) {
-    var infoWindow = new google.maps.InfoWindow({ content: content });
-    var marker = new google.maps.Marker({
-                map: map,
+  mark(location, title, content) {
+    this.infoWindow = new google.maps.InfoWindow({ content: content });
+    this.marker = new google.maps.Marker({
+                map: this.map,
                 position: location,
                 animation: google.maps.Animation.BOUNCE,
                 label: title
               });
-    marker.addListener('click', () => { infoWindow.open(map, marker) });
+    this.marker.addListener('click', () => { infoWindow.open(this.map, marker)
+    });
   }
 }
 

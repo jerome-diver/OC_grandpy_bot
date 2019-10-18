@@ -1,5 +1,8 @@
 <div class="bot-dialog">
     <p>{{ answer }}</p>
+    {% if map_id != "map_" %}
+        <div id="{{ map_id }}" class="google-map"></div>
+    {% endif %}
     <div class="local-time-zone">
         {{ time }}<br>
         {{ location }}
