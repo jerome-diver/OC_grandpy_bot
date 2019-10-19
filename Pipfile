@@ -18,7 +18,6 @@ numpy = "*"
 treetaggerwrapper = "*"
 bootstrap-flask = "*"
 pymediawiki = "*"
-geodatapython = "*"
 flask-assets = "*"
 
 [requires]
