@@ -27,3 +27,4 @@ POSSIBLE_ANSWER = ["Je ne sais plus, je ne me rapelle plus de tout ça.",
                    "précision. Voici ce dont je me rapelle :",
                    "Je me rapelle bien quand j'étais gamin...",
                    "Salut, de quoi veux-tu que je te parle ?"]
+port = int(environ.get('PORT', 5000))
