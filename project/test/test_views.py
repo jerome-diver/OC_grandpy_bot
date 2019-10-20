@@ -23,7 +23,7 @@ class TestViews(TestCase):
         assert response.status_code == 200
         self.assert_template_used('index.html')
 
-    def test_question_submit_form(self):
+    def test_submit(self):
         """test render json after post http request
         from ajax call form submit"""
 
@@ -44,3 +44,22 @@ class TestViews(TestCase):
             assert response.json[req["assert_k"]] == req["assert_v"] \
                 if req["assert_t"] \
                 else response.json[req["assert_k"]] != req["assert_v"]
+
+    def test_map_coordinates(self):
+        """Test render json data with map_id, latitude, longitude and
+        address linked with coorinates for GoogleMap object for AJAX
+        call"""
+
+        pass
+
+    def user_said(self):
+        """Test render html template 'user_said.html' with question,
+        time, localtime for AJAX call"""
+
+        pass
+
+    def test_bot_said(self):
+        """Test render html template 'bot_said.html' with map_id, answer,
+        localtime, time from AJAX call"""
+
+        pass

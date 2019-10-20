@@ -17,17 +17,6 @@ from project.analyzer import Analyzer
 ANALYZE = Analyzer()
 
 
-@app.route('/map_coordinates', methods=['GET'])
-def map_coordinates():
-    """Get  map coordinates from AJAX bot request"""
-
-    return jsonify(dict(
-        map_id = ANALYZE.map_id,
-        latitude = ANALYZE.latitude,
-        longitude = ANALYZE.longitude,
-        address = ANALYZE.address))
-
-
 @app.route('/')
 @app.route('/index/')
 def index():
@@ -112,3 +101,14 @@ def user_said():
                                  question=question,
                                  time=time,
                                  location=location)))
+
+
+@app.route('/map_coordinates', methods=['GET'])
+def map_coordinates():
+    """Get  map coordinates from AJAX bot request"""
+
+    return jsonify(dict(
+        map_id = ANALYZE.map_id,
+        latitude = ANALYZE.latitude,
+        longitude = ANALYZE.longitude,
+        address = ANALYZE.address))
