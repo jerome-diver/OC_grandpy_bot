@@ -26,6 +26,16 @@ TDD: TestDriven Development
 
 ## API informations
 
+### Javascript libraries
+
+- [moment.js to get local time and local zone](https://momentjs.com/)
+- [jquery]()
+
+### Style / CSS
+
+- [Bootstrap 4 frameworks responsive]()
+- [FontAwesome 5](https://use.fontawesome.com/releases/v5.10.1/css/all.css)
+
 ### Google Maps
 
 - [find map](https://developers.google.com/maps/documentation/urls/guide?hl=fr)
