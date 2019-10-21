@@ -1,0 +1,31 @@
+{
+  "addons": [
+
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "description": "OpenClassRooms Path Python project 7 - Grand Py bot",
+  "env": {
+    "FLASK_APP": {
+      "required": true
+    },
+    "GOOGLE_KEY": {
+      "required": true
+    },
+    "PYTHONUNBUFFERED": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "OC_grandpy_bot",
+  "scripts": {
+  },
+  "stack": "heroku-18"
+}
