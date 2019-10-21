@@ -2,20 +2,10 @@
 
 import re
 from flask import render_template
-from treetaggerwrapper import TreeTagger as tt
 from mediawiki import MediaWiki
 from jinja2 import Markup, escape
-from enum import Enum
 
 from .models import StopWord
-from config import TAGPARFILE, TAGDIR
-
-
-class Removed(Enum):
-
-    NOTHING = 1
-    STOP_WORDS = 2
-    STOP_WORDS_VERBS = 3
 
 
 class Properties:
@@ -34,12 +24,7 @@ class Properties:
         self._last = None
         self._get_last = False
         self._index = None
-        self._possibilities = list()
         self._map_id = 0
-        self._queries = dict(
-            N=QueryWiki(Removed.NOTHING),
-            SW=QueryWiki(Removed.STOP_WORDS),
-            SW_V=QueryWiki(Removed.STOP_WORDS_VERBS))
         self._query = None
 
     @property
@@ -90,14 +75,14 @@ class Properties:
     def answer(self):
         """Property for self._answer"""
 
-        if self._get_last or len(self._possibilities) == 1:
+        if self._get_last or len(self._query.possibilities) == 1:
             return Markup(
                 f"<p>{escape(self._introduction)}</p>"
                 f"<p>{self._content}</p>"
                 f"<p>{escape(self._last)}</p>")
-        elif len(self._possibilities) > 1:
+        elif len(self._query.possibilities) > 1:
             text = render_template("button_possibility.html",
-                                   possibilities=self._possibilities)
+                                   possibilities=self._query.possibilities)
             return Markup(text)
         else:
             return f'<p>Je ne sais rien à ce propos, je suis désolé.</p>'
@@ -127,12 +112,11 @@ class Properties:
         return self._map_id
 
 
-class Tools():
-
-    VERB = re.compile(r'VER:.*')
+class Parser():
 
     def __init__(self):
         self._input = None
+        self._query_analyzed = None
 
     def remove_stop_words(self) -> str:
         """Remove stop words"""
@@ -152,52 +136,23 @@ class Tools():
                               .first()]
         return " ".join(nsw)
 
-    def remove_verbs(self) -> str:
-        """remove verbs from self._query"""
 
-        without_verbs = [word for word in self._input.split(" ")
-                         if word not in
-                         [tag[0] for tag in self.extract_verbs()] ]
-        return " ".join(without_verbs)
-
-    def get_tags(self):
-        """Get tags from TreeTagger"""
-
-        tagger = tt(TAGDIR=TAGDIR, TAGPARFILE=TAGPARFILE, TAGLANG='fr')
-        return [tuple(tag.split("\t"))
-                for tag in tagger.tag_text(self._input)]
-
-    def extract_verbs(self) -> list:
-        """Extract principal verb"""
-
-        return [tag for tag in self.get_tags()
-                if self.VERB.match(tag[1])]
-
-
-class QueryWiki(Tools):
+class QueryWiki(Parser):
     """Create query to get result oriented searching form factory"""
 
     WIKI = MediaWiki("https://fr.wikipedia.org/w/api.php", lang='fr')
 
-    def __init__(self, form: Removed):
+    def __init__(self):
 
         super().__init__()
-        self._form = form
-        self._query_analyzed = None
         self._possibilities = list()
 
     def define(self, question: str):
         """Define query form and process other owned definition linked"""
 
         self._input = question
-        if self._form == Removed.STOP_WORDS:
-            self._query_analyzed = self.remove_stop_words()
-        elif self._form == Removed.STOP_WORDS_VERBS:
-            self._input = self.remove_stop_words()
-            self._query_analyzed = self.remove_verbs()
-        else:
-            self._query_analyzed = question
-        print(f"ANALYZE QUERY FOR {self._form} IS:", self._query_analyzed)
+        self._query_analyzed = self.remove_stop_words()
+        print("After removed stop_words, query_parsed =", self._query_analyzed)
 
     @property
     def page(self):
@@ -229,12 +184,6 @@ class QueryWiki(Tools):
         """suggested_title property from MEDIAWIKI"""
 
         return self.WIKI.suggest(self._query_analyzed)
-
-    @property
-    def tags(self):
-        """tags property from Tools tags words"""
-
-        return self.get_tags()
 
     @property
     def coordinates(self):
@@ -270,18 +219,14 @@ class Analyzer(Properties):
     def __init__(self):
 
         super().__init__()
+        self._query = QueryWiki()
 
     def clear(self):
         """Clear all class variables"""
 
         self._get_last = False
         self._index = 0
-        self._possibilities = list()
-        self._queries = dict(
-            N=QueryWiki(Removed.NOTHING),
-            SW=QueryWiki(Removed.STOP_WORDS),
-            SW_V=QueryWiki(Removed.STOP_WORDS_VERBS))
-        self._query = None
+        self._query = QueryWiki()
         self._map_id += 1
 
     def last_answer(self, index=0):
@@ -294,36 +239,27 @@ class Analyzer(Properties):
         """Ask question"""
 
         if self._get_last:
-            self._queries["N"].define(self._possibilities[self._index])
+            self._query.define(self._query.possibilities[self._index])
         else:
-            for key, query in self._queries.items():
-                query.define(question)
-                if query.searching:
-                    for possible in query.possibilities:
-                        if possible not in self._possibilities:
-                            self._possibilities.append(possible)
+            self._query.define(question)
 
     def find_something(self) -> int:
-        self._last = "J'espère que ça te convient bonhomme. As-tu une autre " \
-                     "question ?"
-        if self._get_last:
-            self._query = self._queries['N']
-            self.collect_data()
-            self.form_answer_elements()
-            return 1
-        elif len(self._possibilities) == 1:
-            self._query = self._queries['SW_V']
-            self._query.define(self._possibilities.pop())
-            self.collect_data()
-            self.form_answer_elements()
-            return 1
-        elif len(self._possibilities) > 1:
-            self._introduction = "Cela me fait penser à plusieurs choses, " \
-                                "de quoi est-il question plus précisément ?"
-            for index, possible in enumerate(self._possibilities):
-                self._content += f"{index}) {possible}\n"
-            self._last = "Fais un choix dans cette liste mon grand..."
-            return 2
+        """Find possibilities or last answer and return code 0 1 or 2"""
+
+        if self._query.searching:
+            self._last = "J'espère que ça te convient bonhomme. As-tu une autre " \
+                         "question ?"
+            if self._get_last or len(self._query.possibilities) == 1:
+                self.collect_data()
+                self.form_answer_elements()
+                return 1
+            elif len(self._query.possibilities) > 1:
+                self._introduction = "Cela me fait penser à plusieurs choses, " \
+                                    "de quoi est-il question plus précisément ?"
+                for index, possible in enumerate(self._query.possibilities):
+                    self._content += f"{index}) {possible}\n"
+                self._last = "Fais un choix dans cette liste mon grand..."
+                return 2
         return 0
 
     def collect_data(self):

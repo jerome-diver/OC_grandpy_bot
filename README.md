@@ -1,18 +1,21 @@
 # -- Grandpy Bot --
+
 OpenClassRooms - project 7 - GrandPy Bot, the grand father bot.
 
 Ask a question target on location and it should answer and show the targeted
  point on a map
 
-## Utiliser
+## Used
 
 - Python-3.7
 - Flask
 - javascript with AJAX (jQuery ok)
 - API Google Map
 - API Media Wiki
+- Deploy on Heroku
 
-## Methode
+## Work's method
+
 TDD: TestDriven Development
  
 - create tests
@@ -38,6 +41,11 @@ TDD: TestDriven Development
 
 - [pymediawiki](https://github.com/barrust/mediawiki)
 
+## sources extraction from...
+
+- [stop words list files]()
+- [french conjugate's verbs](https://github.com/Drulac/Verbes-Francais-Conjugues)
+
 ## Dependencies
 
 ### Software
@@ -56,6 +64,6 @@ TDD: TestDriven Development
 - Blinker
 - ipykernel (used for jupyter tool)
 
-## Try aaplication
+## Try application
 
 [let's go there](https:/oc-grandpy1976-bot.heroku.com)
