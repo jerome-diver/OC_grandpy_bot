@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "eb4e0356a58e988a089308cdcc0f21a44bcb4adcbfa5893ccaad1d04facabead"
+            "sha256": "bd1dd3dbc83cc882708ed30f4e65a0b0160e4693880a263135fead0cbfc35a32"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -154,14 +154,6 @@
             "index": "pypi",
             "version": "==0.7.1"
         },
-        "gunicorn": {
-            "hashes": [
-                "sha256:aa8e0b40b4157b36a5df5e599f45c9c76d6af43845ba3b3b0efe2c70473c2471",
-                "sha256:fa2662097c66f920f53f70621c6c58ca4a3c4d3434205e608e121b5b3b71f4f3"
-            ],
-            "index": "pypi",
-            "version": "==19.9.0"
-        },
         "idna": {
             "hashes": [
                 "sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407",
@@ -179,11 +171,11 @@
         },
         "ipykernel": {
             "hashes": [
-                "sha256:167c3ef08450f5e060b76c749905acb0e0fbef9365899377a4a1eae728864383",
-                "sha256:b503913e0b4cce7ed2de965457dfb2edd633e8234161a60e23f2fe2161345d12"
+                "sha256:1a7def9c986f1ee018c1138d16951932d4c9d4da01dad45f9d34e9899565a22f",
+                "sha256:b368ad13edb71fa2db367a01e755a925d7f75ed5e09fbd3f06c85e7a8ef108a8"
             ],
             "index": "pypi",
-            "version": "==5.1.2"
+            "version": "==5.1.3"
         },
         "ipython": {
             "hashes": [
@@ -480,13 +472,6 @@
             ],
             "version": "==4.3.3"
         },
-        "treetaggerwrapper": {
-            "hashes": [
-                "sha256:8d4a291fef263ee8b546e6368e407e984ba466d5afa56e6ffc2ae495f3414b67"
-            ],
-            "index": "pypi",
-            "version": "==2.3"
-        },
         "urllib3": {
             "hashes": [
                 "sha256:3de946ffbed6e6746608990594d08faac602528ac7015ac28d33cee6a45b7398",
@@ -513,13 +498,6 @@
                 "sha256:e5f4a1f98b52b18a93da705a7458e55afb26f32bff83ff5d19189f92462d65c4"
             ],
             "version": "==0.16.0"
-        },
-        "wikipedia-api": {
-            "hashes": [
-                "sha256:72b32d4f90f4f6febe204135cc46f4a0ca469d6f70e1ec926b377709b955e6c0"
-            ],
-            "index": "pypi",
-            "version": "==0.5.2"
         },
         "zipp": {
             "hashes": [

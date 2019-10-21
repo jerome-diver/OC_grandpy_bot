@@ -13,13 +13,11 @@ flask = "*"
 ipykernel = "*"
 pytest-cov = "*"
 blinker = "*"
-wikipedia-api = "*"
 numpy = "*"
 treetaggerwrapper = "*"
 bootstrap-flask = "*"
 pymediawiki = "*"
 flask-assets = "*"
-gunicorn = "*"
 
 [requires]
 python_version = "3.7"

@@ -7,16 +7,16 @@ Posez une question il vous répondra (mais on ne vous promet rien d'autre).
 
 - Python-3.7
 - Flask
-- javascript avec methodes AJAX (jQuery ok)
-- API de Google Map
-- API de Media Wiki
+- javascript with AJAX (jQuery library used)
+- API Google Map
+- API Media Wiki
 
 ## Methode
-TDD: TestDriven Development et de façon récursive pour chaque fonctionnalité
- implémentée (module, classe, méthode ou fonction):
+TDD: TestDriven Development (modulus, class, function with mock as need):
  
-- créer le test pour une fonctionnalité
-- créer ensuite la fonctionnalité jusqu'à ce que le test passe
+- create tests functionalities
+- create class and methods required to pass tests 
+
 - améliorer le code une fois le test passé
 - re-valider les tests pour confirmr que l'amélioration du code ne casse rien
 
