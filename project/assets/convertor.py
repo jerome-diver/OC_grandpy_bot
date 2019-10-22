@@ -12,7 +12,7 @@ import json
 
 DIRNAME = os.getcwd()
 VERBS_JSON_FILE = os.path.join(DIRNAME, "verbs.json")
-FILE_CONVERTED = "converted.json"
+FILE_CONVERTED = "stop_verbs.json"
 
 
 def remove_existing_file(f: str):

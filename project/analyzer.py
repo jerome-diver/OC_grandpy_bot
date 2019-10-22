@@ -4,8 +4,7 @@ import re
 from flask import render_template
 from mediawiki import MediaWiki
 from jinja2 import Markup, escape
-
-from .models import StopWord
+import json
 
 
 class Properties:
@@ -118,7 +117,13 @@ class Parser():
         self._input = None
         self._query_analyzed = None
 
-    def remove_stop_words(self) -> str:
+    def remove_all(self):
+        """Remove stop_words and conjugate verbs from input"""
+
+        rsw = self.remove_stop_words(self._input)
+        return self.remove_conjugate_verbs(rsw)
+
+    def remove_stop_words(self, sentence) -> str:
         """Remove stop words"""
 
         # remove first and last spaces
@@ -126,16 +131,41 @@ class Parser():
         # remove non alphabetic's chars
         clean = ["".join(c for c in word if c.isalpha())
                  for word in
-                 self._input.strip()
+                 sentence.strip()
                      .translate(str.maketrans("'-", "  "))
                      .split(" ")]
         # remove stop words and isolate chars
         nsw = [word for word in [x for x in clean if len(x) > 1]
-               if not StopWord.query
-                              .filter_by(word=word.lower())
-                              .first()]
+               if not self.stop_words(word.lower())]
         return " ".join(nsw)
 
+    def remove_conjugate_verbs(self, sentence) -> str:
+        """Remove conjugate verbs"""
+
+        ncv = [word for word in sentence.strip().split(" ")
+               if not self.stop_verbs(word.lower())]
+        return " ".join(ncv)
+
+    @staticmethod
+    def stop_words(word: str) -> bool:
+        """is it in the stop word list ?"""
+
+        with open("project/assets/stopwords-fr.txt", "r") as stop_words:
+            for stop_word in stop_words:
+                if word == stop_word.strip():
+                    return True
+        return False
+
+    @staticmethod
+    def stop_verbs(word: str) -> bool:
+        """is it in the stop word list ?"""
+
+        with open("project/assets/stop_verbs.json", "r",
+                  encoding='utf-8') as stop_verbs:
+            for stop_verb in json.load(stop_verbs):
+                if word == stop_verb.strip():
+                    return True
+        return False
 
 class QueryWiki(Parser):
     """Create query to get result oriented searching form factory"""
@@ -151,8 +181,9 @@ class QueryWiki(Parser):
         """Define query form and process other owned definition linked"""
 
         self._input = question
-        self._query_analyzed = self.remove_stop_words()
-        print("After removed stop_words, query_parsed =", self._query_analyzed)
+        self._query_analyzed = self.remove_all()
+        print("After removed stop_words and conjugate verbs, query_parsed =",
+              self._query_analyzed)
 
     @property
     def page(self):
