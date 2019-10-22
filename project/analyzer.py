@@ -6,6 +6,7 @@ from mediawiki import MediaWiki
 from jinja2 import Markup, escape
 import json
 
+from config import STOP_WORDS_FR, STOP_VERBS_FR
 
 class Properties:
 
@@ -150,7 +151,7 @@ class Parser():
     def stop_words(word: str) -> bool:
         """is it in the stop word list ?"""
 
-        with open("project/assets/stopwords-fr.txt", "r") as stop_words:
+        with open(STOP_WORDS_FR, "r") as stop_words:
             for stop_word in stop_words:
                 if word == stop_word.strip():
                     return True
@@ -160,8 +161,7 @@ class Parser():
     def stop_verbs(word: str) -> bool:
         """is it in the stop word list ?"""
 
-        with open("project/assets/stop_verbs.json", "r",
-                  encoding='utf-8') as stop_verbs:
+        with open(STOP_VERBS_FR, "r", encoding='utf-8') as stop_verbs:
             for stop_verb in json.load(stop_verbs):
                 if word == stop_verb.strip():
                     return True
