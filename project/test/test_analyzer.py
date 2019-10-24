@@ -2,12 +2,12 @@
 - methods of Analyzer instance object"""
 
 from project.analyzer import Analyzer
-from project.models import StopWord
 
 SENTENCES = [
-    " ".join(x.word for x in StopWord.query.all()) + "     , + 5 _ ' ` @ ) ( =",
+    "Sais-tu où se trouve le Musée du Louvre ?"
     "Connaissez-vous Napoléon ?"
 ]
+
 ANSWER_TAGS = [None,
                [('Connaissez', 'VER:pres', 'connaître'),
                 ('-vous', 'PRO:PER', 'vous'),

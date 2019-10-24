@@ -1,7 +1,7 @@
 """Test Flask views.py project module and his routes provide templates"""
 
 from flask_testing import TestCase
-from flask import json, url_for
+from flask import jsonify, url_for, request
 
 
 class TestViews(TestCase):
@@ -23,27 +23,34 @@ class TestViews(TestCase):
         assert response.status_code == 200
         self.assert_template_used('index.html')
 
-    def test_submit(self):
+    def test_submit(self, monkeypath):
         """test render json after post http request
         from ajax call form submit"""
 
-        tests = [
-            dict(assert_k="answer",
-                 assert_v='',
-                 assert_t=False,
-                 data=dict([('question', 'pizza')])),
-            dict(assert_k="ERROR",
-                 assert_v='missing question',
-                 assert_t=True,
-                 data=dict([('question','')]))]
-        for req in tests:
-            response = self.client.post(
-                url_for("question"),
-                data=req["data"])
-            assert response.status_code == 200
-            assert response.json[req["assert_k"]] == req["assert_v"] \
-                if req["assert_t"] \
-                else response.json[req["assert_k"]] != req["assert_v"]
+        def request_question():
+            """Mock 'request.form' AJAX's POST called object
+            for a question type"""
+
+            return jsonify({
+                'question': "Sais-tu où se trouve le Musée du Louvre ?",
+                'type': 'question',
+                'index': 0 })
+
+        def request_answer():
+            """Mock request.form AJAX's post called object
+            for an answer type"""
+
+            return jsonify({
+                'question': '',
+                'type': 'answer',
+                'index': 1 })
+
+        # TEST AJAX call request.form['type'] = 'question'
+        monkeypath.setattr(request, "form", request_question)
+
+        response = self.client.post( url_for("submit") )
+        assert response.status_code == 200
+        print(response.json())
 
     def test_map_coordinates(self):
         """Test render json data with map_id, latitude, longitude and
