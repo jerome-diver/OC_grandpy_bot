@@ -2,12 +2,18 @@
 
 from flask_testing import TestCase
 from flask import jsonify, url_for, request
+from _pytest.monkeypatch import MonkeyPatch
 
 
 class TestViews(TestCase):
     """Test views module"""
 
     render_templates = False
+
+    def setUp(self):
+        """At setup time initialization"""
+
+        self._monkeypatch = MonkeyPatch()
 
     def create_app(self):
         """Test app"""
@@ -23,7 +29,7 @@ class TestViews(TestCase):
         assert response.status_code == 200
         self.assert_template_used('index.html')
 
-    def test_submit(self, monkeypath):
+    def test_submit(self):
         """test render json after post http request
         from ajax call form submit"""
 
@@ -46,11 +52,11 @@ class TestViews(TestCase):
                 'index': 1 })
 
         # TEST AJAX call request.form['type'] = 'question'
-        monkeypath.setattr(request, "form", request_question)
+        self._monkeypatch.setattr(request, "form", request_question)
 
         response = self.client.post( url_for("submit") )
         assert response.status_code == 200
-        print(response.json())
+        print(response)
 
     def test_map_coordinates(self):
         """Test render json data with map_id, latitude, longitude and
