@@ -22,6 +22,7 @@ ANALYZE = Analyzer()
 def index():
     """At start time, should call an index.html page"""
 
+    global ANALYZE
     ANALYZE = Analyzer()
     return render_template('index.html', GOOGLE_KEY=GOOGLE_KEY)
 
@@ -42,7 +43,6 @@ def submit():
     if question:
         ANALYZE.ask(question)
         found = ANALYZE.find_something()
-        print("| found value:", found, "\n| answer:", ANALYZE.answer)
         if found > 0:
             data = dict(
                 question=question,
@@ -70,6 +70,7 @@ def submit():
         data = dict(ERROR="missing question")
     data.update(dict(messages=render_template("messages.html",
                                               alert=alert)))
+    print(data)
     return jsonify(data)
 
 

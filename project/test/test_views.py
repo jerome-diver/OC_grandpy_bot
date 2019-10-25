@@ -3,17 +3,19 @@
 from flask_testing import TestCase
 from flask import jsonify, url_for, request
 from _pytest.monkeypatch import MonkeyPatch
+import pytest
 
 
+@pytest.fixture(scope="class")
+def monkeypatch_for_class(request):
+    request.cls._monkeypatch = MonkeyPatch()
+
+
+@pytest.mark.usefixtures("monkeypatch_for_class")
 class TestViews(TestCase):
     """Test views module"""
 
     render_templates = False
-
-    def setUp(self):
-        """At setup time initialization"""
-
-        self._monkeypatch = MonkeyPatch()
 
     def create_app(self):
         """Test app"""
@@ -31,32 +33,93 @@ class TestViews(TestCase):
 
     def test_submit(self):
         """test render json after post http request
-        from ajax call form submit"""
+        from ajax call form submit
+        and mock Analyzer class methods"""
 
-        def request_question():
-            """Mock 'request.form' AJAX's POST called object
-            for a question type"""
+        def analyze(type, *args):
 
-            return jsonify({
-                'question': "Sais-tu où se trouve le Musée du Louvre ?",
-                'type': 'question',
-                'index': 0 })
+            return str
 
-        def request_answer():
-            """Mock request.form AJAX's post called object
-            for an answer type"""
+        def analyze_ok(self):
 
-            return jsonify({
-                'question': '',
-                'type': 'answer',
-                'index': 1 })
+            return 'OK'
 
-        # TEST AJAX call request.form['type'] = 'question'
-        self._monkeypatch.setattr(request, "form", request_question)
+        def find_something(self):
 
-        response = self.client.post( url_for("submit") )
-        assert response.status_code == 200
-        print(response)
+            return 1
+
+        def find_many_things(self):
+
+            return 2
+
+        def find_nothing(self):
+
+            return 0
+
+        """TEST AJAX call request.form['type'] = 'question'
+           and found many things 
+        """
+        from project.analyzer import Analyzer
+        self._monkeypatch.setattr(Analyzer, "find_something",
+                                  find_many_things)
+        self._monkeypatch.setattr(Analyzer, "title", analyze_ok(0))
+        self._monkeypatch.setattr(Analyzer, "answer", analyze_ok(0))
+        self._monkeypatch.setattr(Analyzer, "ask", analyze('null'))
+        # get a response from POST on /submit url
+        response = self.client.post( url_for("submit"),
+                                     data={'question': 'try',
+                                           'type': 'question',
+                                           'index': 0})
+        self.assertEqual(response.json, dict(question='try',
+                                             answer='OK',
+                                             found=2,
+                                             messages='',
+                                             title='OK'
+                                             ))
+        """ TEST AJAX call request.form['type'] = 'answer'
+            and find something
+        """
+        self._monkeypatch.setattr(Analyzer, "find_something",
+                                  find_something)
+        self._monkeypatch.setattr(Analyzer, "resume", analyze_ok(0))
+        self._monkeypatch.setattr(Analyzer, "map_id", analyze_ok(0))
+        self._monkeypatch.setattr(Analyzer, "latitude", analyze_ok(0))
+        self._monkeypatch.setattr(Analyzer, "longitude", analyze_ok(0))
+        self._monkeypatch.setattr(Analyzer, "address", analyze_ok(0))
+        response = self.client.post( url_for("submit"),
+                                     data={'question': 'try',
+                                           'type': 'answer',
+                                           'index': 0})
+        self.assertEqual(response.json, dict(question='try',
+                                             answer='OK',
+                                             found=1,
+                                             messages='',
+                                             title='OK',
+                                             address='OK',
+                                             latitude='OK',
+                                             longitude='OK',
+                                             map_id='OK',
+                                             resume='OK'
+                                             ))
+        """ TEST AJAX call request.form['question'] is empty
+        """
+        response = self.client.post( url_for("submit"),
+                                     data={'question': '',
+                                           'type': 'question',
+                                           'index': 0})
+        self.assertEqual(response.json, dict(messages='',
+                                             ERROR='missing question'))
+        """ TEST AJAX request return nothing found"""
+        self._monkeypatch.setattr(Analyzer, "find_something", find_nothing)
+        response = self.client.post( url_for("submit"),
+                                     data={'question': 'nothing found',
+                                           'type': 'question',
+                                           'index': 0})
+        self.assertEqual(response.json, dict(answer=False,
+                                             found=0,
+                                              messages=''))
+
+
 
     def test_map_coordinates(self):
         """Test render json data with map_id, latitude, longitude and

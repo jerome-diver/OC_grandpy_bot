@@ -167,6 +167,7 @@ class Parser():
                     return True
         return False
 
+
 class QueryWiki(Parser):
     """Create query to get result oriented searching form factory"""
 
