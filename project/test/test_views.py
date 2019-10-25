@@ -76,6 +76,8 @@ class TestViews(TestCase):
                                              messages='',
                                              title='OK'
                                              ))
+        self.assert_template_used('messages.html')
+        self.assert_context('alert', 'alert-success')
         """ TEST AJAX call request.form['type'] = 'answer'
             and find something
         """
@@ -101,6 +103,8 @@ class TestViews(TestCase):
                                              map_id='OK',
                                              resume='OK'
                                              ))
+        self.assert_template_used('messages.html')
+        self.assert_context('alert', 'alert-success')
         """ TEST AJAX call request.form['question'] is empty
         """
         response = self.client.post( url_for("submit"),
@@ -109,6 +113,8 @@ class TestViews(TestCase):
                                            'index': 0})
         self.assertEqual(response.json, dict(messages='',
                                              ERROR='missing question'))
+        self.assert_template_used('messages.html')
+        self.assert_context('alert', 'alert-danger')
         """ TEST AJAX request return nothing found"""
         self._monkeypatch.setattr(Analyzer, "find_something", find_nothing)
         response = self.client.post( url_for("submit"),
@@ -117,7 +123,9 @@ class TestViews(TestCase):
                                            'index': 0})
         self.assertEqual(response.json, dict(answer=False,
                                              found=0,
-                                              messages=''))
+                                             messages=''))
+        self.assert_template_used('messages.html')
+        self.assert_context('alert', 'alert-warning')
 
 
 
