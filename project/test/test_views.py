@@ -1,7 +1,7 @@
 """Test Flask views.py project module and his routes provide templates"""
 
 from flask_testing import TestCase
-from flask import jsonify, url_for, request
+from flask import url_for, render_template
 from _pytest.monkeypatch import MonkeyPatch
 import pytest
 
@@ -136,11 +136,24 @@ class TestViews(TestCase):
 
         pass
 
-    def user_said(self):
-        """Test render html template 'user_said.html' with question,
-        time, localtime for AJAX call"""
+    def test_user_said(self):
+        """Test assert template 'user_said.html',
+        assert contextual variables
+        and JSON answer"""
 
-        pass
+        response = self.client.post( url_for("user_said"),
+                                     data={'question': 'try',
+                                           'time': '10:39:00 PM',
+                                           'location': 'Asia/Bangkok'})
+        self.assertEqual(response.json, dict(
+            question=render_template('user_said.html',
+                                     question='try',
+                                     time='10:39:00 PM',
+                                     location='Asia/Bangkok')))
+        self.assert_template_used('user_said.html')
+        self.assert_context('question', 'try')
+        self.assert_context('time', '10:39:00 PM')
+        self.assert_context('location', 'Asia/Bangkok')
 
     def test_bot_said(self):
         """Test render html template 'bot_said.html' with map_id, answer,
