@@ -8,17 +8,20 @@ import pytest
 
 @pytest.fixture(scope="class")
 def monkeypatch_for_class(request):
+    """I use monkeypatch self fixture variable
+    for class test methods API"""
+
     request.cls._monkeypatch = MonkeyPatch()
 
 
 @pytest.mark.usefixtures("monkeypatch_for_class")
 class TestViews(TestCase):
-    """Test views module"""
+    """Test views API class"""
 
     render_templates = False
 
     def create_app(self):
-        """Test app"""
+        """Test app for TESTING with Flask_testing TestCase mixin"""
 
         from project.views import app
         app.config['TESTING'] = True
@@ -127,14 +130,13 @@ class TestViews(TestCase):
         self.assert_template_used('messages.html')
         self.assert_context('alert', 'alert-warning')
 
-
-
     def test_map_coordinates(self):
         """Test render json data with map_id, latitude, longitude and
-        address linked with coorinates for GoogleMap object for AJAX
+        address linked with coordinates for GoogleMap object for AJAX
         call"""
 
         def analyze_ok(self):
+            """Mock function for Analyze methods"""
 
             return 'OK'
 
