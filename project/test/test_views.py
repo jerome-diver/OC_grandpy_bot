@@ -1,7 +1,7 @@
 """Test Flask views.py project module and his routes provide templates"""
 
 from flask_testing import TestCase
-from flask import url_for, render_template
+from flask import url_for, render_template, Markup
 from _pytest.monkeypatch import MonkeyPatch
 import pytest
 
@@ -141,10 +141,10 @@ class TestViews(TestCase):
         assert contextual variables
         and JSON answer"""
 
-        response = self.client.post( url_for("user_said"),
-                                     data={'question': 'try',
-                                           'time': '10:39:00 PM',
-                                           'location': 'Asia/Bangkok'})
+        response = self.client.post(url_for("user_said"),
+                                    data={'question': 'try',
+                                          'time': '10:39:00 PM',
+                                          'location': 'Asia/Bangkok'})
         self.assertEqual(response.json, dict(
             question=render_template('user_said.html',
                                      question='try',
@@ -156,7 +156,23 @@ class TestViews(TestCase):
         self.assert_context('location', 'Asia/Bangkok')
 
     def test_bot_said(self):
-        """Test render html template 'bot_said.html' with map_id, answer,
-        localtime, time from AJAX call"""
+        """Test assert template 'bot_said.html',
+        assert contextual variables
+        and JSON answer"""
 
-        pass
+        response = self.client.post(url_for("bot_said"),
+                                    data={'answer': 'OK',
+                                          'time': '10:40:00 PM',
+                                          'location': 'Asia/Bangkok',
+                                          'mapid': 1})
+        self.assertEqual(response.json, dict(
+            answer=render_template('bot_said.html',
+                                   answer=Markup('OK'),
+                                   time='10:40:00 PM',
+                                   location='Asia/Bangkok',
+                                   map_id=1)))
+        self.assert_template_used('bot_said.html')
+        self.assert_context('answer', 'OK')
+        self.assert_context('time', '10:40:00 PM')
+        self.assert_context('location', 'Asia/Bangkok')
+        self.assert_context('map_id', 1)
