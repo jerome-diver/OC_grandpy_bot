@@ -134,7 +134,21 @@ class TestViews(TestCase):
         address linked with coorinates for GoogleMap object for AJAX
         call"""
 
-        pass
+        def analyze_ok(self):
+
+            return 'OK'
+
+        from project.analyzer import Analyzer
+        self._monkeypatch.setattr(Analyzer, "map_id", analyze_ok(0))
+        self._monkeypatch.setattr(Analyzer, "latitude", analyze_ok(0))
+        self._monkeypatch.setattr(Analyzer, "longitude", analyze_ok(0))
+        self._monkeypatch.setattr(Analyzer, "address", analyze_ok(0))
+
+        response = self.client.get( url_for("map_coordinates") )
+        self.assertEqual(response.json, dict(address='OK',
+                                             latitude='OK',
+                                             longitude='OK',
+                                             map_id='OK'))
 
     def test_user_said(self):
         """Test assert template 'user_said.html',
