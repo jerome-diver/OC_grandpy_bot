@@ -43,7 +43,6 @@ class Properties:
     def latitude(self, value):
         """Set self._latitude"""
 
-        print("Found latitude:", value)
         self._latitude = value
 
     @property
@@ -56,7 +55,6 @@ class Properties:
     def longitude(self, value):
         """Set self._latitude"""
 
-        print("Found longitude:", value)
         self._longitude = value
 
     @property
@@ -199,12 +197,6 @@ class QueryWiki(Parser):
         if self._possibilities:
             return True
         return False
-
-    @property
-    def suggested_title(self):
-        """suggested_title property from MEDIAWIKI"""
-
-        return self.WIKI.suggest(self._query_analyzed)
 
     @property
     def coordinates(self):

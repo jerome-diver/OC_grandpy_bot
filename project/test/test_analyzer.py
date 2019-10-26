@@ -7,18 +7,18 @@
 
 from project.analyzer import *
 from config import STOP_WORDS_FR, STOP_VERBS_FR
+
 import json
 import pytest
+from _pytest.monkeypatch import MonkeyPatch
 
-SENTENCES = [
-    "Sais-tu où se trouve le Musée du Louvre ?"
-    "Connaissez-vous Napoléon ?"
-]
 
-TESTS = []
-for sentence in SENTENCES:
-    TESTS.append(Analyzer())
-    TESTS[-1].ask(sentence)
+@pytest.fixture(scope="class")
+def monkeypatch_for_class(request):
+    """I use monkeypatch self fixture variable
+    for class test methods API"""
+
+    request.cls._monkeypatch = MonkeyPatch()
 
 
 @pytest.fixture
@@ -26,6 +26,13 @@ def parser() -> Parser:
     """Need a parser"""
 
     return Parser()
+
+
+@pytest.fixture
+def analyzer() -> Analyzer:
+    """Need an Analyzer instance fixture"""
+
+    return Analyzer()
 
 
 @pytest.fixture
@@ -71,8 +78,17 @@ class TestParser():
         assert parser.remove_all() == ""
 
 
+@pytest.mark.usefixtures("monkeypatch_for_class")
 class TestQueryWiki():
     """Test for QueryWiki object instance"""
+
+    def wiki_str(self, query):
+
+        return query
+
+    def wiki_kwargs(self, *args, **kwargs) -> str:
+
+        return "OK"
 
     def test_define(self, query_wiki,
                     give_stop_words, give_stop_verbs):
@@ -83,9 +99,65 @@ class TestQueryWiki():
         assert query_wiki._input == question
         assert query_wiki._query_analyzed == ""
 
+    def test_page(self, query_wiki):
+        """Test property page call mocked QueryWiki.WIKI.page"""
 
+        self._monkeypatch.setattr(QueryWiki.WIKI, "page", self.wiki_str)
+        assert query_wiki.page == None
+
+    def test_resume(self, query_wiki):
+        """Test QueryWiki.resume call mocked QueryWiki.WIKI.summary
+        and return corect formed html"""
+
+        self._monkeypatch.setattr(QueryWiki.WIKI, "summary",
+                                  self.wiki_kwargs)
+        assert query_wiki.resume == "<h2>None</h2><p>OK</p>"
+
+    def test_searching(self, query_wiki):
+        """TEst QueryWiki.searching return Boolean True value related to
+        mocked QueryWiki.WIKI.search"""
+
+        self._monkeypatch.setattr(QueryWiki.WIKI, "search",
+                                  self.wiki_kwargs)
+        assert query_wiki.searching is True
+
+
+@pytest.mark.usefixtures("monkeypatch_for_class")
 class TestAnalyzer():
     """Test for Analyzer class instance"""
 
-    pass
+    def wiki_str(self, query):
+
+        return query
+
+    def wiki_kwargs(self, *args, **kwargs) -> str:
+
+        return "OK"
+
+    def test_clear(self, analyzer):
+        """Test if Analyzer.clear get good values initialization"""
+
+        for id in range(2):
+            analyzer.clear()
+            assert isinstance(analyzer._query, QueryWiki)
+            assert analyzer._get_last is False
+            assert analyzer._index == 0
+            assert analyzer._map_id == 1 + id
+
+    @pytest.mark.parametrize('arg, last, index',
+                             [(0, True, 0), (2, True, 1)])
+    def test_last_answer(self, analyzer, arg, last, index):
+        """Test last answer setup correctly"""
+
+        analyzer.last_answer(arg)
+        assert analyzer._get_last == last
+        assert analyzer._index == index
+
+    def test_ask(self, analyzer, give_stop_words, give_stop_verbs):
+        """Test if can ask and get good _query (QueryWiki) defined"""
+
+        full = " ".join(give_stop_words | give_stop_verbs)
+        analyzer.ask(full)
+        assert analyzer._query._query_analyzed == ''
+
 
