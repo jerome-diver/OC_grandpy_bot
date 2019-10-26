@@ -6,6 +6,9 @@
   """
 
 from project.analyzer import Analyzer
+from project.analyzer import Parser
+from config import STOP_WORDS_FR, STOP_VERBS_FR
+import json
 
 SENTENCES = [
     "Sais-tu où se trouve le Musée du Louvre ?"
@@ -18,18 +21,37 @@ for sentence in SENTENCES:
     TESTS[-1].ask(sentence)
 
 
-class TestProperties():
-    """Test for properties for Analyzer"""
-
-    def test_try(self):
-
-        pass
-
-
 class TestParser():
     """Test for Parser tools instance"""
 
-    pass
+    def give_stop_words(self) -> set:
+        """Give a stop words set"""
+
+        with open(STOP_WORDS_FR, 'r') as sw:
+            return set(map(str.strip, sw))
+
+    def give_stop_verbs(self) -> set:
+        """Give a stop verbs set"""
+
+        with open(STOP_VERBS_FR, 'r', encoding='utf-8') as sv:
+            stop_verbs = set(map(str.strip, json.load(sv)))
+        return stop_verbs
+
+    def test_remove_stop_words(self):
+        """Test if all stop words to be removed"""
+
+        parser = Parser()
+        sw = self.give_stop_words()
+        full = " ".join(sw)
+        assert parser.remove_stop_words(full) == ""
+
+    def test_remove_conjugate_verbs(self):
+        """Test if all stop words to be removed"""
+
+        parser = Parser()
+        sv = self.give_stop_verbs()
+        full = " ".join(sv)
+        assert parser.remove_conjugate_verbs(full) == ""
 
 
 class TestQueryWiki():
@@ -41,19 +63,5 @@ class TestQueryWiki():
 class TestAnalyzer():
     """Test for Analyzer class instance"""
 
-    def test_remove_stop_words():
-        """Get sample of StopWords from database and try function
-        result should be empty"""
-
-        assert TESTS[0]._query == ""
-        assert TESTS[1]._query == "Connaissez Napoléon"
-
-    def test_extract_verbs():
-        """Test function to extract principal verb in complicate sentence"""
-
-        assert TESTS[1]._verbs == [("Connaissez", "VER:pres", "connaître")]
-
-    def test_catch_coordinates():
-        """Test extraction of searching words from sentence"""
-
     pass
+

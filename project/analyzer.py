@@ -130,42 +130,34 @@ class Parser():
         # remove first and last spaces
         # replace ' - by <space> char
         # remove non alphabetic's chars
-        clean = ["".join(c for c in word if c.isalpha())
+        clean = set(["".join(c for c in word if c.isalpha())
                  for word in
                  sentence.strip()
                      .translate(str.maketrans("'-", "  "))
-                     .split(" ")]
+                     .split(" ")])
         # remove stop words and isolate chars
-        nsw = [word for word in [x for x in clean if len(x) > 1]
-               if not self.stop_words(word.lower())]
-        return " ".join(nsw)
+        nsw = set([x for x in clean if len(x) > 1]) - self.stop_words()
+        return " ".join(nsw) if nsw else ""
 
     def remove_conjugate_verbs(self, sentence) -> str:
         """Remove conjugate verbs"""
 
-        ncv = [word for word in sentence.strip().split(" ")
-               if not self.stop_verbs(word.lower())]
-        return " ".join(ncv)
+        ncv = set(map(str.strip, sentence.split(" "))) - self.stop_verbs()
+        return " ".join(ncv) if ncv else ""
 
     @staticmethod
-    def stop_words(word: str) -> bool:
+    def stop_words() -> set:
         """is it in the stop word list ?"""
 
         with open(STOP_WORDS_FR, "r") as stop_words:
-            for stop_word in stop_words:
-                if word == stop_word.strip():
-                    return True
-        return False
+            return set(map(str.strip, set(stop_words)))
 
     @staticmethod
-    def stop_verbs(word: str) -> bool:
+    def stop_verbs() -> set:
         """is it in the stop word list ?"""
 
         with open(STOP_VERBS_FR, "r", encoding='utf-8') as stop_verbs:
-            for stop_verb in json.load(stop_verbs):
-                if word == stop_verb.strip():
-                    return True
-        return False
+            return set(map(str.strip, json.load(stop_verbs)))
 
 
 class QueryWiki(Parser):
