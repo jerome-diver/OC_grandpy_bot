@@ -58,6 +58,14 @@ class TestParser():
         full = " ".join(sv)
         assert parser.remove_conjugate_verbs(full) == ""
 
+    def test_remove_all(self, parser):
+        """Test if can remove all full lists give empty string"""
+
+        full_set = self.give_stop_words()
+        full_set.update(self.give_stop_verbs())
+        parser._input = " ".join(full_set)
+        assert parser.remove_all()
+
 
 class TestQueryWiki():
     """Test for QueryWiki object instance"""

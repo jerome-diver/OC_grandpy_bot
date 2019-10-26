@@ -116,7 +116,6 @@ class Parser():
 
     def __init__(self):
         self._input = None
-        self._query_analyzed = None
 
     def remove_all(self):
         """Remove stop_words and conjugate verbs from input"""
@@ -169,6 +168,7 @@ class QueryWiki(Parser):
 
         super().__init__()
         self._possibilities = list()
+        self._query_analyzed = None
 
     def define(self, question: str):
         """Define query form and process other owned definition linked"""
