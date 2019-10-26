@@ -5,6 +5,7 @@ from flask_assets import Environment, Bundle
 from flask_bootstrap import Bootstrap
 
 from config import GOOGLE_KEY
+from project.models import BotSpeach
 
 
 app = Flask(__name__)
@@ -23,8 +24,12 @@ def index():
     """At start time, should call an index.html page"""
 
     global ANALYZE
+    bot = BotSpeach()
     ANALYZE = Analyzer()
-    return render_template('index.html', GOOGLE_KEY=GOOGLE_KEY)
+    return render_template('index.html',
+                           logo_tag=bot.presentation,
+                           intro=bot.ask("first"),
+                           GOOGLE_KEY=GOOGLE_KEY)
 
 
 @app.route('/submit', methods=['POST'])

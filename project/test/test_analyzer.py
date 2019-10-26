@@ -160,4 +160,7 @@ class TestAnalyzer():
         analyzer.ask(full)
         assert analyzer._query._query_analyzed == ''
 
+    def test_find_something(self, analyzer, query_wiki):
+        """Test correct setup what ever found from mocked QueryWiki"""
+
 

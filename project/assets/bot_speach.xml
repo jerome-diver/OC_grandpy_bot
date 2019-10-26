@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<bot>
+    <presentation>Tu sais où tu veux aller, le vieux papy-bot sera peut-être où ça se trouve et ce que tu pourrais y trouver...</presentation>
+    <ask>
+        <first>Salut, je suis un vieux robot, je suis programmé pour essayer de t'aider à trouver des réponses, poses ta question bonhomme. </first>
+        <choice>Fais un choix dans la liste mon grand.</choice>
+    </ask>
+    <answer>
+        <intro type="mono-choice">Ha oui, je pense avoir trouvé ce que tu cherches...</intro>
+        <intro type="multi-choice">J'ai trouvé plusieurs sujets à ce propos, de quoi est-il question ? Avec quoi est-ce en relation ?</intro>
+        <intro type="nothing">Ha bah non, j'ai des trous de mémoire.</intro>
+        <last type="mono-choice">J'ai espoir que ça puisse te convenir bonhomme.</last>
+        <last type="multi-choice">Fais donc un choix dans cette liste.</last>
+        <last type="nothing">Essayes voir de me demander la même chose, mais formulé autrement.</last>
+    </answer>
+</bot>

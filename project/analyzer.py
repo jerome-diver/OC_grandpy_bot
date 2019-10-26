@@ -7,6 +7,8 @@ from jinja2 import Markup, escape
 import json
 
 from config import STOP_WORDS_FR, STOP_VERBS_FR
+from project.models import BotSpeach
+
 
 class Properties:
 
@@ -26,6 +28,7 @@ class Properties:
         self._index = None
         self._map_id = 0
         self._query = None
+        self._bot = BotSpeach()
 
     @property
     def question(self):
@@ -83,7 +86,7 @@ class Properties:
                                    possibilities=self._query.possibilities)
             return Markup(text)
         else:
-            return f'<p>Je ne sais rien à ce propos, je suis désolé.</p>'
+            return f'<p>{self._bot.answer("intro", "nothing")}</p>'
 
     @property
     def result(self):
@@ -115,7 +118,7 @@ class Parser():
     def __init__(self):
         self._input = None
 
-    def remove_all(self) -> str:
+    def remove_all(self, test=False) -> str:
         """Remove stop_words and conjugate verbs from input"""
 
         return self.remove_stop_words(self.remove_conjugate_verbs(self._input))
@@ -123,37 +126,22 @@ class Parser():
     def remove_stop_words(self, sentence) -> str:
         """Remove stop words"""
 
-        # remove first and last spaces
-        # replace ' - by <space> char
-        # remove non alphabetic's chars
-        clean = set(["".join(c for c in word if c.isalpha())
-                 for word in
-                 sentence.strip()
-                     .translate(str.maketrans("'-", "  "))
-                     .split(" ")])
+        # get set of stop_words
+        with open(STOP_WORDS_FR, "r") as stop_words:
+            sw = set(map(str.strip, set(stop_words)))
+        clean = set(map(str.lower, sentence.split(" ")))
         # remove stop words and isolate chars
-        nsw = set([x for x in clean if len(x) > 1]) - self.stop_words()
+        nsw = set([x for x in clean if len(x) > 1]) - sw
         return " ".join(nsw) if nsw else ""
 
     def remove_conjugate_verbs(self, sentence) -> str:
         """Remove conjugate verbs"""
 
-        ncv = set(map(str.strip, sentence.split(" "))) - self.stop_verbs()
-        return " ".join(ncv) if ncv else ""
-
-    @staticmethod
-    def stop_words() -> set:
-        """Give  the stop word full set"""
-
-        with open(STOP_WORDS_FR, "r") as stop_words:
-            return set(map(str.strip, set(stop_words)))
-
-    @staticmethod
-    def stop_verbs() -> set:
-        """Give the stop verbs full set"""
-
+        cl = set(map(str.lower, sentence.split(" ")))
         with open(STOP_VERBS_FR, "r", encoding='utf-8') as stop_verbs:
-            return set(map(str.strip, json.load(stop_verbs)))
+            sv = set(map(str.strip, json.load(stop_verbs)))
+        ncv = cl - sv
+        return " ".join(ncv) if ncv else ""
 
 
 class QueryWiki(Parser):
@@ -172,6 +160,7 @@ class QueryWiki(Parser):
 
         self._input = question
         self._query_analyzed = self.remove_all()
+        print("RESULT ANALYZE:", self._query_analyzed)
 
     @property
     def page(self):
@@ -260,18 +249,16 @@ class Analyzer(Properties):
         """Find possibilities or last answer and return code 0 1 or 2"""
 
         if self._query.searching:
-            self._last = "J'espère que ça te convient bonhomme. As-tu une autre " \
-                         "question ?"
             if self._get_last or len(self._query.possibilities) == 1:
+                self._last = self._bot.answer("last", "mono-choice")
                 self.collect_data()
                 self.form_answer_elements()
                 return 1
             elif len(self._query.possibilities) > 1:
-                self._introduction = "Cela me fait penser à plusieurs choses, " \
-                                    "de quoi est-il question plus précisément ?"
+                self._introduction = self._bot.answer("intro", "multi-choice")
                 for index, possible in enumerate(self._query.possibilities):
                     self._content += f"{index}) {possible}\n"
-                self._last = "Fais un choix dans cette liste mon grand..."
+                self._last = self._bot.answer("last", "multi-choice")
                 return 2
         return 0
 
@@ -287,7 +274,7 @@ class Analyzer(Properties):
         """Define answer elements for answer sentence"""
 
         if self._result:
-            self._introduction = "Voilà ce que j'ai trouvé"
+            self._introduction = self._bot.answer("intro", "mono-choice")
             self._content = self.resume
 
     def catch_coordinates(self, query):

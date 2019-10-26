@@ -6,8 +6,7 @@
         <img src="{{url_for('static', filename='img/HAL 9000.gif')}}"
              id="hal"
              class="pull-right img-responsive">
-        <p>Tu sais où tu veux aller, le vieux papy-bot sera peut-être où ça se
-            trouve et ce que tu pourrais y trouver...</p>
+        <p>{{ logo_tag }}</p>
     </div>
     <div id="messages" style="diplay:none;">
         {% include 'messages.html' %}</div>
@@ -17,9 +16,7 @@
     <div id="chat-room" class="col-md-12">
         <article id="chat">
             <div class="bot-dialog">
-                Salut, je suis un vieux robot, je suis programmé pour
-                essayer de t'aider à trouver des réponses, poses ta question
-                bonhomme.
+                {{ intro }}
             </div>
         </article>
         <div id="question-content">
