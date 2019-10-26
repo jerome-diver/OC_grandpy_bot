@@ -9,6 +9,7 @@ from project.analyzer import Analyzer
 from project.analyzer import Parser
 from config import STOP_WORDS_FR, STOP_VERBS_FR
 import json
+import pytest
 
 SENTENCES = [
     "Sais-tu où se trouve le Musée du Louvre ?"
@@ -20,6 +21,12 @@ for sentence in SENTENCES:
     TESTS.append(Analyzer())
     TESTS[-1].ask(sentence)
 
+
+@pytest.fixture
+def parser():
+    """Need a parser"""
+
+    return Parser()
 
 class TestParser():
     """Test for Parser tools instance"""
@@ -37,18 +44,16 @@ class TestParser():
             stop_verbs = set(map(str.strip, json.load(sv)))
         return stop_verbs
 
-    def test_remove_stop_words(self):
+    def test_remove_stop_words(self, parser):
         """Test if all stop words to be removed"""
 
-        parser = Parser()
         sw = self.give_stop_words()
         full = " ".join(sw)
         assert parser.remove_stop_words(full) == ""
 
-    def test_remove_conjugate_verbs(self):
+    def test_remove_conjugate_verbs(self, parser):
         """Test if all stop words to be removed"""
 
-        parser = Parser()
         sv = self.give_stop_verbs()
         full = " ".join(sv)
         assert parser.remove_conjugate_verbs(full) == ""

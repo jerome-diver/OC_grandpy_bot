@@ -147,14 +147,14 @@ class Parser():
 
     @staticmethod
     def stop_words() -> set:
-        """is it in the stop word list ?"""
+        """Give  the stop word full set"""
 
         with open(STOP_WORDS_FR, "r") as stop_words:
             return set(map(str.strip, set(stop_words)))
 
     @staticmethod
     def stop_verbs() -> set:
-        """is it in the stop word list ?"""
+        """Give the stop verbs full set"""
 
         with open(STOP_VERBS_FR, "r", encoding='utf-8') as stop_verbs:
             return set(map(str.strip, json.load(stop_verbs)))
