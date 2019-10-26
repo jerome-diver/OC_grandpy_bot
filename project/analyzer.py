@@ -117,11 +117,10 @@ class Parser():
     def __init__(self):
         self._input = None
 
-    def remove_all(self):
+    def remove_all(self) -> str:
         """Remove stop_words and conjugate verbs from input"""
 
-        rsw = self.remove_stop_words(self._input)
-        return self.remove_conjugate_verbs(rsw)
+        return self.remove_stop_words(self.remove_conjugate_verbs(self._input))
 
     def remove_stop_words(self, sentence) -> str:
         """Remove stop words"""
@@ -175,8 +174,6 @@ class QueryWiki(Parser):
 
         self._input = question
         self._query_analyzed = self.remove_all()
-        print("After removed stop_words and conjugate verbs, query_parsed =",
-              self._query_analyzed)
 
     @property
     def page(self):
