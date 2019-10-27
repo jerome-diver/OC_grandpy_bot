@@ -126,6 +126,9 @@ class TestQueryWiki():
 class TestAnalyzer():
     """Test for Analyzer class instance"""
 
+    from project.models import BotSpeach
+    BOT = BotSpeach()
+
     def wiki_str(self, query):
 
         return query
@@ -187,9 +190,25 @@ class TestAnalyzer():
         assert analyzer.find_something() == assertion
 
     def test_collect_data(self, analyzer):
+        """Test if self._result get result of method QueryWiki.page
+        and function return Nothing"""
 
         self._monkeypatch.setattr(QueryWiki, "page", self.wiki_kwargs())
         self._monkeypatch.setattr(Analyzer, "catch_coordinates",
                                   self.catch_coordinates)
         assert analyzer.collect_data() == None
         assert analyzer.result == "OK"
+
+    @pytest.mark.parametrize('result, assertion1, assertion2', [
+                        (False, None, "<h2>None</h2><p>OK</p>"),
+                        (True, BOT.answer("intro", "mono-choice"), "OK")])
+    def test_form_answer_elements(self, analyzer, result,
+                                  assertion1, assertion2):
+        """Do something only if get a QueryWiki.result"""
+
+        if result:
+            self._monkeypatch.setattr(Analyzer, "result", self.wiki_kwargs())
+            self._monkeypatch.setattr(QueryWiki, "resume", self.wiki_kwargs())
+        analyzer.form_answer_elements()
+        assert analyzer._introduction == assertion1
+        assert analyzer.resume == assertion2

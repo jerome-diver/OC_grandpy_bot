@@ -273,7 +273,7 @@ class Analyzer(Properties):
     def form_answer_elements(self):
         """Define answer elements for answer sentence"""
 
-        if self._result:
+        if self.result:
             self._introduction = self._bot.answer("intro", "mono-choice")
             self._content = self.resume
 
