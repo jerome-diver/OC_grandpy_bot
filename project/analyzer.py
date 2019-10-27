@@ -208,9 +208,11 @@ class QueryWiki(Parser):
         return self.page.html
 
     @property
-    def possibilities(self):
+    def possibilities(self, index=None):
         """Property for all possibilities of this queryWiki"""
 
+        if index:
+            return self._possibilities[index]
         return self._possibilities
 
 
