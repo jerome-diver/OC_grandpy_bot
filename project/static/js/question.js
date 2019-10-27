@@ -39,6 +39,7 @@ class Dialog {
           this.bot.said(data.answer, data.map_id,
                         data.title, data.resume);
           $('#result').html(data.result);
+          $('.choices').prop("disabled",true);
         }
         else if (data.found == 2) {
           $('#result').html(data.result);
