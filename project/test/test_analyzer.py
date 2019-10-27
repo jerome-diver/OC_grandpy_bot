@@ -173,8 +173,7 @@ class TestAnalyzer():
                               ([], False, 0),
                               ([], True, 1)
                               ])
-    def test_find_something(self, analyzer, query_wiki,
-                            possible, get_last, assertion):
+    def test_find_something(self, analyzer, possible, get_last, assertion):
         """Test correct setup what ever found from mocked QueryWiki"""
 
         self._monkeypatch.setattr(QueryWiki.WIKI, "search",
@@ -187,4 +186,10 @@ class TestAnalyzer():
         analyzer._get_last = get_last
         assert analyzer.find_something() == assertion
 
+    def test_collect_data(self, analyzer):
 
+        self._monkeypatch.setattr(QueryWiki, "page", self.wiki_kwargs())
+        self._monkeypatch.setattr(Analyzer, "catch_coordinates",
+                                  self.catch_coordinates)
+        assert analyzer.collect_data() == None
+        assert analyzer.result == "OK"
