@@ -46,7 +46,6 @@ def submit():
         index = int(regex_id.group(1)) - 1
     else:
         index = int(index)
-    print("-------INDEX--------", index)
     alert = "alert-success"
     data = dict()
     if type == "answer":

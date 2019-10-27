@@ -37,4 +37,4 @@ class BotSpeach:
     def presentation(self) -> str:
         """Return presentation sentence"""
 
-        return self._root.find("presentation")
+        return self._root.find("presentation").text
