@@ -290,17 +290,8 @@ class Analyzer(Properties):
                 if found:
                     self.latitude = found.group(1)
                     self.longitude = found.group(2)
-        if self.has_coordinates():
-            print("COORDINATES :", self._latitude, self._longitude)
-        else:
-            print("NO COORDINATES FOUND")
 
     def has_coordinates(self) -> bool:
         """Said if has coordinates ready"""
 
         return self._latitude is not None and self._longitude is not None
-
-    def catch_address(self, query):
-        """Catch an address from wiki text result"""
-
-        self._address = ""
