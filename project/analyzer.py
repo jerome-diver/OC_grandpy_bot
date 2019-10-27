@@ -295,3 +295,8 @@ class Analyzer(Properties):
         """Said if has coordinates ready"""
 
         return self._latitude is not None and self._longitude is not None
+
+    def catch_address(self, query):
+        """Catch an address from wiki text result"""
+
+        self._address = ""
