@@ -233,11 +233,11 @@ class Analyzer(Properties):
         self._query = QueryWiki()
         self._map_id += 1
 
-    def last_answer(self, index=0):
+    def last_answer(self, index):
         """Wash previous possibilities content and define one answer"""
 
         self._get_last = True
-        self._index = index - 1 if index != 0 else 0
+        self._index = index
 
     def ask(self, question: str):
         """Ask question"""

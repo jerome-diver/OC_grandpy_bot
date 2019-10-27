@@ -38,7 +38,7 @@ def submit():
 
     question = request.form['question']
     type = request.form['type']
-    index = int(request.form['index'])
+    index = int(request.form['index']) - 1
     alert = "alert-success"
     data = dict()
     if type == "answer":
