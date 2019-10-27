@@ -24,17 +24,17 @@ class BotSpeach:
         ask = self._root.find('ask')
         return ask.find(clue).text
 
-    def answer(self, clue, type):
+    def answer(self, clue, type) -> str:
         """Return text correspond to answer-clue with type attribute"""
 
         answer = self._root.find("answer")
         for target in answer.findall(clue):
             if target.attrib["type"] == type:
                 return target.text
+        return ""
 
     @property
-    def presentation(self):
+    def presentation(self) -> str:
         """Return presentation sentence"""
 
-        prez = self._root.find("presentation")
-        return prez.text
+        return self._root.find("presentation")

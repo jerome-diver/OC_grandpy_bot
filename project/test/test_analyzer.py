@@ -134,6 +134,11 @@ class TestAnalyzer():
 
         return "OK"
 
+    def catch_coordinates(self, query):
+        """Get mock coordinates"""
+
+        pass
+
     def test_clear(self, analyzer):
         """Test if Analyzer.clear get good values initialization"""
 
@@ -160,7 +165,26 @@ class TestAnalyzer():
         analyzer.ask(full)
         assert analyzer._query._query_analyzed == ''
 
-    def test_find_something(self, analyzer, query_wiki):
+    @pytest.mark.parametrize('possible, get_last, assertion',
+                             [([0,1], False, 2),
+                              ([0,1], True, 1),
+                              ([0], False, 1),
+                              ([0], True, 1),
+                              ([], False, 0),
+                              ([], True, 1)
+                              ])
+    def test_find_something(self, analyzer, query_wiki,
+                            possible, get_last, assertion):
         """Test correct setup what ever found from mocked QueryWiki"""
+
+        self._monkeypatch.setattr(QueryWiki.WIKI, "search",
+                                  self.wiki_kwargs)
+        self._monkeypatch.setattr(QueryWiki.WIKI, "page", self.wiki_str)
+        self._monkeypatch.setattr(analyzer, "catch_coordinates",
+                                  self.catch_coordinates)
+        self._monkeypatch.setattr(QueryWiki, "possibilities",
+                                  possible)
+        analyzer._get_last = get_last
+        assert analyzer.find_something() == assertion
 
 
