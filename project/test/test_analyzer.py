@@ -153,7 +153,7 @@ class TestAnalyzer():
             assert analyzer._map_id == 1 + id
 
     @pytest.mark.parametrize('arg, last, index',
-                             [(0, True, 0), (2, True, 1)])
+                             [(0, True, 0), (2, True, 2)])
     def test_last_answer(self, analyzer, arg, last, index):
         """Test last answer setup correctly"""
 

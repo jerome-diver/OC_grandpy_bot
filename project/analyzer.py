@@ -255,7 +255,7 @@ class Analyzer(Properties):
         """Find possibilities or last answer and return code 0 1 or 2"""
 
         if self._query.searching:
-            if self._get_last or len(self._query.possibilities) == 1:
+            if len(self._query.possibilities) == 1 or self._get_last:
                 self._last = self._bot.answer("last", "mono-choice")
                 self.collect_data()
                 self.form_answer_elements()
@@ -263,7 +263,7 @@ class Analyzer(Properties):
             elif len(self._query.possibilities) > 1:
                 self._introduction = self._bot.answer("intro", "multi-choice")
                 for index, possible in enumerate(self._query.possibilities):
-                    self._content += f"{index}) {possible}\n"
+                    self._content += f"{index}) {possible[0]}\n"
                 self._last = self._bot.answer("last", "multi-choice")
                 return 2
         return 0
