@@ -16,6 +16,7 @@ numpy = "*"
 bootstrap-flask = "*"
 pymediawiki = "*"
 flask-assets = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
