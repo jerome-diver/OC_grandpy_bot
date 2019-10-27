@@ -3,8 +3,8 @@
 <div class="choices">
     {% for possibility in possibilities %}
         <button class="btn btn-secondary not-inline dialog-answer choices"
-                id="{{loop.index}}">
-            {{possibility}}
+                id="{{ possibility[1] }}_{{loop.index}}">
+            {{ possibility[0] }}
             </button>
     {% endfor %}
 </div>

@@ -3,6 +3,7 @@
 from flask import Flask, render_template, jsonify, request, flash, Markup
 from flask_assets import Environment, Bundle
 from flask_bootstrap import Bootstrap
+import re
 
 from config import GOOGLE_KEY
 from project.models import BotSpeach
@@ -16,6 +17,7 @@ bootstrap = Bootstrap(app)
 from project.analyzer import Analyzer
 
 ANALYZE = Analyzer()
+EXTRACT_ID = re.compile(r".*\_(\d+)")
 
 
 @app.route('/')
@@ -38,7 +40,13 @@ def submit():
 
     question = request.form['question']
     type = request.form['type']
-    index = int(request.form['index']) - 1
+    index = request.form['index']
+    if index != '0':
+        regex_id = EXTRACT_ID.match(index)
+        index = int(regex_id.group(1)) - 1
+    else:
+        index = int(index)
+    print("-------INDEX--------", index)
     alert = "alert-success"
     data = dict()
     if type == "answer":

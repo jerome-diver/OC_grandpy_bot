@@ -180,11 +180,15 @@ class QueryWiki(Parser):
     def searching(self):
         """searching property from MEDIAWIKI"""
 
-        self._possibilities = self.WIKI.search(self._query_analyzed,
+        import uuid
+        possibilities = self.WIKI.search(self._query_analyzed,
                                                suggestion=False,
                                                results=5)
-        if self._possibilities:
+        if possibilities:
+            for possible in possibilities:
+                self.possibilities.append((possible, str(uuid.uuid4())))
             return True
+        self._possibilities = []
         return False
 
     @property
@@ -243,7 +247,7 @@ class Analyzer(Properties):
         """Ask question"""
 
         if self._get_last:
-            self._query.define(self._query.possibilities[self._index])
+            self._query.define(self._query.possibilities[self._index][0])
         else:
             self._query.define(question)
 
