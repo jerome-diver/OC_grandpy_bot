@@ -168,19 +168,20 @@ class TestAnalyzer():
         analyzer.ask(full)
         assert analyzer._query._query_analyzed == ''
 
-    @pytest.mark.parametrize('possible, get_last, assertion',
-                             [([0,1], False, 2),
-                              ([0,1], True, 1),
-                              ([0], False, 1),
-                              ([0], True, 1),
-                              ([], False, 0),
-                              ([], True, 1)
+    @pytest.mark.parametrize('possible, get_last, search, assertion',
+                             [([0,1], False, True, 2),
+                              ([0,1], True, True, 1),
+                              ([0], False, True, 1),
+                              ([0], True, True, 1),
+                              ([], False, True, 0),
+                              ([], True, True, 1),
+                              ([0,1], True, False, 0)
                               ])
-    def test_find_something(self, analyzer, possible, get_last, assertion):
+    def test_find_something(self, analyzer, possible, get_last,
+                            search, assertion):
         """Test correct setup what ever found from mocked QueryWiki"""
 
-        self._monkeypatch.setattr(QueryWiki.WIKI, "search",
-                                  self.wiki_kwargs)
+        self._monkeypatch.setattr(QueryWiki, "searching", search)
         self._monkeypatch.setattr(QueryWiki.WIKI, "page", self.wiki_str)
         self._monkeypatch.setattr(analyzer, "catch_coordinates",
                                   self.catch_coordinates)

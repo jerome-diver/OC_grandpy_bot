@@ -263,7 +263,7 @@ class Analyzer(Properties):
             elif len(self._query.possibilities) > 1:
                 self._introduction = self._bot.answer("intro", "multi-choice")
                 for index, possible in enumerate(self._query.possibilities):
-                    self._content += f"{index}) {possible[0]}\n"
+                    self._content += f"{index}) {possible}\n"
                 self._last = self._bot.answer("last", "multi-choice")
                 return 2
         return 0
