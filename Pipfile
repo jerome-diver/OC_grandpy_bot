@@ -8,11 +8,9 @@ verify_ssl = true
 [packages]
 pytest = "*"
 flask-testing = "*"
-flask-sqlalchemy = "*"
 flask = "*"
 pytest-cov = "*"
 blinker = "*"
-numpy = "*"
 bootstrap-flask = "*"
 pymediawiki = "*"
 flask-assets = "*"

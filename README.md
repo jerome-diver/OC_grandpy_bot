@@ -63,17 +63,18 @@ TDD: TestDriven Development
 - Python-3.7
 - pipenv
 
-### Python libraries
+### Python libraries from pypi
 
 - pytest
 - pytest-cov
-- Flask
-- Flask-Testing
-- Flask-SQLAlchemy
-- Flask-Bootstrap4
-- Blinker
-- ipykernel (used for jupyter tool)
+- flask
+- flask-testing
+- flask_assets
+- blinker
+- bootstrap_flask
+- pymediawiki
+- gunicorn
 
 ## Try application
 
-[let's go there](https:/oc-grandpy1976-bot.heroku.com)
+[let's go there](https://oc-python-p7-lanteri.herokuapp.com/)
