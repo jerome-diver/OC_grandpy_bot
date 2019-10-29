@@ -169,14 +169,13 @@ class TestAnalyzer():
         assert analyzer._query._query_analyzed == ''
 
     @pytest.mark.parametrize('possible, get_last, search, assertion',
-                             [([0,1], False, True, 2),
-                              ([0,1], True, True, 1),
-                              ([0], False, True, 1),
-                              ([0], True, True, 1),
-                              ([], False, True, 0),
-                              ([], True, True, 1),
-                              ([0,1], True, False, 0)
-                              ])
+                             [(dict(a=1, b=2), False, True, 2),
+                              (dict(a=1, b=2), True, True, 1),
+                              (dict(a=1), False, True, 1),
+                              (dict(a=1), True, True, 1),
+                              (dict(), False, True, 0),
+                              (dict(), True, True, 1),
+                              (dict(a=1, b=2), True, False, 0)])
     def test_find_something(self, analyzer, possible, get_last,
                             search, assertion):
         """Test correct setup what ever found from mocked QueryWiki"""

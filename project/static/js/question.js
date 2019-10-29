@@ -45,7 +45,9 @@ class Dialog {
           $('#result').html(data.result);
           this.bot.said(data.answer, null, null, null)
         }
-        else { console.log("Nothing found") }
+        else {
+          this.bot.said(data.result, null, null, null)
+        }
       }
     });
   }

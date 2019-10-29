@@ -94,7 +94,7 @@ class TestViews(TestCase):
         response = self.client.post( url_for("submit"),
                                      data={'question': 'try',
                                            'type': 'answer',
-                                           'index': f"{str(uuid4())}_0"})
+                                           'index': str(uuid4())})
         self.assertEqual(response.json, dict(question='try',
                                              answer='OK',
                                              found=1,

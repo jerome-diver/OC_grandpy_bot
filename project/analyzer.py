@@ -152,7 +152,7 @@ class QueryWiki(Parser):
     def __init__(self):
 
         super().__init__()
-        self._possibilities = list()
+        self._possibilities = dict()
         self._query_analyzed = None
 
     def define(self, question: str):
@@ -182,13 +182,14 @@ class QueryWiki(Parser):
 
         import uuid
         possibilities = self.WIKI.search(self._query_analyzed,
-                                               suggestion=False,
-                                               results=5)
+                                         suggestion=False,
+                                         results=5)
         if possibilities:
+            print("POSSIBILITIES", possibilities)
             for possible in possibilities:
-                self.possibilities.append((possible, str(uuid.uuid4())))
+                self._possibilities[str(uuid.uuid4())] = possible
             return True
-        self._possibilities = []
+        self._possibilities = dict()
         return False
 
     @property
@@ -247,7 +248,7 @@ class Analyzer(Properties):
         """Ask question"""
 
         if self._get_last:
-            self._query.define(self._query.possibilities[self._index][0])
+            self._query.define(self._query.possibilities[self._index])
         else:
             self._query.define(question)
 
@@ -262,8 +263,8 @@ class Analyzer(Properties):
                 return 1
             elif len(self._query.possibilities) > 1:
                 self._introduction = self._bot.answer("intro", "multi-choice")
-                for index, possible in enumerate(self._query.possibilities):
-                    self._content += f"{index}) {possible}\n"
+                for possible in self._query.possibilities.values():
+                    self._content += f"{possible}\n"
                 self._last = self._bot.answer("last", "multi-choice")
                 return 2
         return 0

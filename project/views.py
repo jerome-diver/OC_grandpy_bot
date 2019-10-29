@@ -18,6 +18,7 @@ from project.analyzer import Analyzer
 
 ANALYZE = Analyzer()
 EXTRACT_ID = re.compile(r".*\_(\d+)")
+BOT = BotSpeach()
 
 
 @app.route('/')
@@ -26,11 +27,10 @@ def index():
     """At start time, should call an index.html page"""
 
     global ANALYZE
-    bot = BotSpeach()
     ANALYZE = Analyzer()
     return render_template('index.html',
-                           logo_tag=bot.presentation,
-                           intro=bot.ask("first"),
+                           logo_tag=BOT.presentation,
+                           intro=BOT.ask("first"),
                            GOOGLE_KEY=GOOGLE_KEY)
 
 
@@ -41,11 +41,6 @@ def submit():
     question = request.form['question']
     type = request.form['type']
     index = request.form['index']
-    if index != '0':
-        regex_id = EXTRACT_ID.match(index)
-        index = int(regex_id.group(1)) - 1
-    else:
-        index = int(index)
     alert = "alert-success"
     data = dict()
     if type == "answer":
@@ -74,7 +69,7 @@ def submit():
             alert = "alert-warning"
             flash(u'Hélas, ma mémoire me fait défaut, je suis trop vieux !',
                   alert)
-            data = dict(answer=False)
+            data = dict(answer=False, result=BOT.answer('last', 'nothing'))
         data.update(dict(found=found))
     else:
         alert="alert-danger"

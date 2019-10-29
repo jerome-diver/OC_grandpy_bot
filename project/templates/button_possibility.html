@@ -1,10 +1,10 @@
 <p>Oui mais à quel propos ?<br>
     Quel est le contexte s'il te plaît ?</p>
 <div class="choices">
-    {% for possibility in possibilities %}
+    {% for id, possibility in possibilities.items() %}
         <button class="btn btn-secondary not-inline dialog-answer choices"
-                id="{{ possibility[1] }}_{{loop.index}}">
-            {{ possibility[0] }}
+                id="{{ id }}">
+            {{ possibility }}
             </button>
     {% endfor %}
 </div>
