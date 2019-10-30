@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <head>
     {% block head %}
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    {% block styles %}
-    <!-- Bootstrap CSS -->
-    {{ bootstrap.load_css(version="4.3.1") }}
-    <link rel="stylesheet"
-          href="https://use.fontawesome.com/releases/v5.10.1/css/all.css">
-    <title>OC - Papy Bot</title>
-    {% endblock %}
-    {{ bootstrap.load_js(version="4.3.1",
-                         jquery_version="3.4.1",
-                         popper_version="1.15.0") }}
-    <!-- Optional JavaScript -->
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_KEY}}&language=fr&libraries=places"
-            type="text/javascript"></script>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        {% block styles %}
+            <!-- Bootstrap CSS -->
+            {{ bootstrap.load_css(version="4.3.1") }}
+            <link rel="stylesheet"
+                  href="https://use.fontawesome.com/releases/v5.10.1/css/all.css">
+            <title>OC - Papy Bot</title>
+        {% endblock %}
+        {{ bootstrap.load_js(version="4.3.1",
+                             jquery_version="3.4.1",
+                             popper_version="1.15.0") }}
+        <!-- Optional JavaScript -->
+        <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_KEY}}&language=fr&libraries=places"
+                type="text/javascript"></script>
+        {% assets "js_all" %}
+            <script type="text/javascript"
+                    src="{{ ASSET_URL }}"></script>
+        {% endassets %}
     {% endblock %}
 </head>
 <body>

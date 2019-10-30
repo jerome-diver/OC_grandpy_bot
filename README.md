@@ -67,11 +67,11 @@ TDD: TestDriven Development
 
 - pytest
 - pytest-cov
-- flask
 - flask-testing
-- flask_assets
-- blinker
+- flask
 - bootstrap_flask
+- flask_assets
+- jsmin
 - pymediawiki
 - gunicorn
 

@@ -10,11 +10,11 @@ pytest = "*"
 flask-testing = "*"
 flask = "*"
 pytest-cov = "*"
-blinker = "*"
 bootstrap-flask = "*"
 pymediawiki = "*"
 flask-assets = "*"
 gunicorn = "*"
+jsmin = "*"
 
 [requires]
 python_version = "3.7"

@@ -3,6 +3,7 @@
 from flask import Flask, render_template, jsonify, request, flash, Markup
 from flask_assets import Environment, Bundle
 from flask_bootstrap import Bootstrap
+import jsmin
 
 from env_var import GOOGLE_KEY
 from project.models import BotSpeach
@@ -12,6 +13,10 @@ app = Flask(__name__)
 app.config.from_object('config.ProductionConfig')
 app.config.from_envvar('APPLICATION_VARS')
 bootstrap = Bootstrap(app)
+assets = Environment(app)
+js = Bundle('js/question.js', 'js/moment-locales.min.js',
+            filters='jsmin', output='js/js_all_min.js')
+assets.register('js_all', js)
 
 
 from project.analyzer import Analyzer
