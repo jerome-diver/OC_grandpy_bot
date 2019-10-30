@@ -1,6 +1,10 @@
 """Config file"""
 
 from os import environ
+from pathlib import Path, PurePath
+
+APPLICATION_VARS = str(PurePath(str(Path.cwd()), 'env_var.py'))
+environ['APPLICATION_VARS'] = APPLICATION_VARS
 
 
 class Config(object):

@@ -10,7 +10,7 @@ from project.models import BotSpeach
 
 app = Flask(__name__)
 app.config.from_object('config.ProductionConfig')
-app.config.from_envvar('env_var')
+app.config.from_envvar('APPLICATION_VARS')
 bootstrap = Bootstrap(app)
 
 
