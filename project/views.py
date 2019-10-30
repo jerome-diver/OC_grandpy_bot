@@ -5,12 +5,13 @@ from flask_assets import Environment, Bundle
 from flask_bootstrap import Bootstrap
 import re
 
-from config import GOOGLE_KEY
+from env_var import GOOGLE_KEY
 from project.models import BotSpeach
 
 
 app = Flask(__name__)
-app.config.from_object('config')
+app.config.from_object('config.ProductionConfig')
+app.config.from_envvar('env_var')
 bootstrap = Bootstrap(app)
 
 

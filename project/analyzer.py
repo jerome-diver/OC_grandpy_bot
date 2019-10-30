@@ -6,7 +6,7 @@ from mediawiki import MediaWiki
 from jinja2 import Markup, escape
 import json
 
-from config import STOP_WORDS_FR, STOP_VERBS_FR
+from env_var import STOP_WORDS_FR, STOP_VERBS_FR
 from project.models import BotSpeach
 
 

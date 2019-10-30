@@ -11,7 +11,7 @@ class TestServer(LiveServerTestCase):
         """Test app"""
 
         from project.views import app
-        app.config['TESTING'] = True
+        app.config.from_object('config.TestingConfig')
         return app
 
     def test_up_and_running(self):

@@ -6,7 +6,7 @@
   """
 
 from project.analyzer import *
-from config import STOP_WORDS_FR, STOP_VERBS_FR
+from  env_var import STOP_WORDS_FR, STOP_VERBS_FR
 
 import json
 import pytest

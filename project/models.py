@@ -2,7 +2,7 @@
 
 import xml.etree.ElementTree as ET
 
-from config import ORIGIN
+from  env_var import ORIGIN
 
 
 class BotSpeach:
