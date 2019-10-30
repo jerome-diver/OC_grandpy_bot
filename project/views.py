@@ -3,7 +3,6 @@
 from flask import Flask, render_template, jsonify, request, flash, Markup
 from flask_assets import Environment, Bundle
 from flask_bootstrap import Bootstrap
-import re
 
 from env_var import GOOGLE_KEY
 from project.models import BotSpeach
@@ -18,7 +17,6 @@ bootstrap = Bootstrap(app)
 from project.analyzer import Analyzer
 
 ANALYZE = Analyzer()
-EXTRACT_ID = re.compile(r".*\_(\d+)")
 BOT = BotSpeach()
 
 
