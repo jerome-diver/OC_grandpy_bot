@@ -147,6 +147,7 @@ class Parser():
 class QueryWiki(Parser):
     """Create query to get result oriented searching form factory"""
 
+    BOT = BotSpeach()
     WIKI = MediaWiki("https://fr.wikipedia.org/w/api.php", lang='fr')
 
     def __init__(self):
@@ -166,14 +167,21 @@ class QueryWiki(Parser):
     def page(self):
         """wiki property"""
 
-        return self.WIKI.page(self._query_analyzed)
+        try:
+            page = self.WIKI.page(self._query_analyzed)
+        except:
+            return None
+        return page
 
     @property
     def resume(self):
         """Resume property"""
 
-        text = self.WIKI.summary(title=self._query_analyzed,
-                                 sentences=10)
+        try:
+            text = self.WIKI.summary(title=self._query_analyzed,
+                                     sentences=10)
+        except:
+            return QueryWiki.BOT.answer("last", "nothing")
         return f"<h2>{self._input}</h2><p>{text}</p>"
 
     @property
@@ -204,7 +212,9 @@ class QueryWiki(Parser):
     def references(self):
         """references property from MEDIAWIKI"""
 
-        return self.page.references
+        if hasattr(self.page, "references"):
+            return self.page.references
+        return None
 
     @property
     def html(self):
@@ -283,20 +293,28 @@ class Analyzer(Properties):
         if self.result:
             self._introduction = self._bot.answer("intro", "mono-choice")
             self._content = self.resume
+        else:
+            self._introduction = self._bot.answer("intro", "nothing")
+            self._content = self._bot.answer("last", "nothing")
 
     def catch_coordinates(self, query):
         """Catch latitude and longitude coordinates from text page html"""
 
         coordinates = query.coordinates
         if coordinates:
+            print('Find COORDINATES')
             self._latitude = float(coordinates[0])
             self._longitude = float(coordinates[1])
         else:
-            for ref in query.references:
-                found = self.COORDINATES.match(ref)
-                if found:
-                    self.latitude = found.group(1)
-                    self.longitude = found.group(2)
+            references = query.references
+            if references:
+                print('Find REFERENCES')
+                for ref in references:
+                    found = self.COORDINATES.match(ref)
+                    if found:
+                        print('Find COORDINATES')
+                        self.latitude = found.group(1)
+                        self.longitude = found.group(2)
 
     def has_coordinates(self) -> bool:
         """Said if has coordinates ready"""

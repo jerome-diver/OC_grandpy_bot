@@ -7,9 +7,10 @@ else if(data.found==2){$('#result').html(data.result);this.bot.said(data.answer,
 else{this.bot.said(data.result,null,null,null)}}});}}
 class Bot{constructor(){this.ajaxError="bot can't said anything... AJAX ERROR";this.ajaxCoordinatesError="There is no AJAX coordinate for a map.";}
 said(content,map_id,title,resume){$.ajax({url:"/bot_said",data:{'answer':content,'time':moment().format('LTS'),'location':tz,'mapid':map_id},type:"POST",success:(response)=>{$("#chat").append(response.answer)
-if(map_id!=null){$.ajax({url:"/map_coordinates",type:"GET",success:(data)=>{var location=null;if(data.latitude!=''){console.log("search from latitude/longitude returned");location=GoogleMap.locationFromCoordinates(data.latitude,data.longitude);}
+if(map_id!=null){$.ajax({url:"/map_coordinates",type:"GET",success:(data)=>{var location=null;if(data.latitude!=null){console.log("search from latitude/longitude",data.latitude,data.longitude);location=GoogleMap.locationFromCoordinates(data.latitude,data.longitude);}
 else if(data.address!=''){console.log("Search from address returned");location=GoogleMap.locationFromAddress(data.address);}
-console.log("Location found is ",location);const map_id="map_"+data.map_id;var map=new GoogleMap(location,map_id);map.mark(location,title,resume);},error:(xhr)=>{console.log(this.ajaxCoordinatesError)}});}},error:(xhr)=>{console.log(this.ajaxError)}});}}
+if(location!=null){console.log("Location found is ",location);const map_id="map_"+data.map_id;var map=new GoogleMap(location,map_id);map.mark(location,title,resume);}
+else{$(".bot-dialog :last").append("(Pas de coordonées trouvées)");}},error:(xhr)=>{console.log(this.ajaxCoordinatesError)}});}},error:(xhr)=>{console.log(this.ajaxError)}});}}
 class User{constructor(){this.ajaxError="user can't said anything... AJAX ERROR";}
 said(content){$.ajax({url:"/user_said",data:{'question':content,'time':moment().format('LTS'),'location':tz},type:"POST",success:(response)=>{$("#chat").append(response.question)},error:(xhr)=>{console.log(this.ajaxError)}});}}
 class GoogleMap{constructor(location,id){console.log("New GoogleMap with id =",id);this.map=this.initMap(location,id);google.maps.event.addDomListener(window,'load',this.map);}

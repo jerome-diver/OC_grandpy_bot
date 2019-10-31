@@ -75,8 +75,10 @@ class Bot {
             type: "GET",
             success: (data) => {
               var location = null;
-              if (data.latitude != '') {
-                console.log("search from latitude/longitude returned");
+              if (data.latitude != null) {
+                console.log("search from latitude/longitude",
+                            data.latitude,
+                            data.longitude);
                 location = GoogleMap.locationFromCoordinates(data.latitude,
                                                              data.longitude);
               }
@@ -84,10 +86,15 @@ class Bot {
                 console.log("Search from address returned");
                 location = GoogleMap.locationFromAddress(data.address);
               }
-              console.log("Location found is ", location);
-              const map_id = "map_" + data.map_id;
-              var map = new GoogleMap(location, map_id);
-              map.mark(location, title, resume);
+              if (location != null) {
+                console.log("Location found is ", location);
+                const map_id = "map_" + data.map_id;
+                var map = new GoogleMap(location, map_id);
+                map.mark(location, title, resume);
+              }
+              else {
+                $(".bot-dialog :last").append("(Pas de coordonées trouvées)");
+              }
             },
             error: (xhr) => { console.log( this.ajaxCoordinatesError ) }
           });
