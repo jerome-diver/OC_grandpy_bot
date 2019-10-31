@@ -5,6 +5,8 @@ from flask import url_for, render_template, Markup
 from _pytest.monkeypatch import MonkeyPatch
 import pytest
 
+from project.models import BotSpeach
+
 
 @pytest.fixture(scope="class")
 def monkeypatch_for_class(request):
@@ -19,6 +21,7 @@ class TestViews(TestCase):
     """Test views API class"""
 
     render_templates = False
+    BOT = BotSpeach()
 
     def create_app(self):
         """Test app for TESTING with Flask_testing TestCase mixin"""
@@ -123,9 +126,11 @@ class TestViews(TestCase):
                                      data={'question': 'nothing found',
                                            'type': 'question',
                                            'index': 0})
+        result = TestViews.BOT.answer("last", 'nothing')
         self.assertEqual(response.json, dict(answer=False,
                                              found=0,
-                                             messages=''))
+                                             messages='',
+                                             result=result))
         self.assert_template_used('messages.html')
         self.assert_context('alert', 'alert-warning')
 

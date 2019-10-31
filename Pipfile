@@ -15,6 +15,7 @@ pymediawiki = "*"
 flask-assets = "*"
 gunicorn = "*"
 jsmin = "*"
+blinker = "*"
 
 [requires]
 python_version = "3.7"

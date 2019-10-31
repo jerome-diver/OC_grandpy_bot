@@ -200,8 +200,12 @@ class TestAnalyzer():
         assert analyzer.result == "OK"
 
     @pytest.mark.parametrize('result, assertion1, assertion2', [
-                        (False, None, "<h2>None</h2><p>OK</p>"),
-                        (True, BOT.answer("intro", "mono-choice"), "OK")])
+                        (False,
+                         BOT.answer("intro", "nothing"),
+                         BOT.answer("last", "nothing")),
+                        (True,
+                         BOT.answer("intro", "mono-choice"),
+                         "OK")])
     def test_form_answer_elements(self, analyzer, result,
                                   assertion1, assertion2):
         """Do something only if get a QueryWiki.result"""
@@ -211,4 +215,4 @@ class TestAnalyzer():
             self._monkeypatch.setattr(QueryWiki, "resume", self.wiki_kwargs())
         analyzer.form_answer_elements()
         assert analyzer._introduction == assertion1
-        assert analyzer.resume == assertion2
+        assert analyzer._content == assertion2
